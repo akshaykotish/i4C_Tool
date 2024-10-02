@@ -1,0 +1,505 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
+
+svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+}
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: "Poppins", sans-serif;
+    font-style: normal;
+}
+
+.RightBox{
+    width: 50vw;
+    height: 100vh;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    padding: 2%;
+    overflow: hidden;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border-radius:10px;
+    padding: 10px 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 94%;
+    max-width: 100%;
+  }
+
+  .search-box img.logo {
+    width: 90px;
+    height: 30px;
+    margin-right: 10px;
+  }
+
+  .search-box input {
+    border: none;
+    outline: none;
+    flex-grow: 1;
+    padding: 10px;
+    font-size: 16px;
+    background-color: whites;
+  }
+
+  .search-box .search-icon {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-box .search-icon img {
+    width: 20px;
+    height: 20px;
+  }
+
+#CityTable{
+    width: 100%;
+}
+
+#CityTable table{
+    width: 100%;
+}
+
+#CityTable th{
+    text-align: left;
+}
+
+
+.CityName{
+    width: 40%;
+}
+
+.Cases{
+    text-align: center !important;
+    background-color: whitesmoke;
+}
+
+#CityTable td{
+    color: black;
+    padding: 1%;
+    padding-bottom: 0.5%;
+    padding-top: 0.5%;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.row{
+    padding: 1%;
+}
+
+.row:hover{
+    background-color: whitesmoke;
+}
+
+.arrow{
+    width: 10%;
+    cursor: pointer;
+    font-size: 7pt;
+    color: grey;
+}
+
+.arrow:hover{
+    font-size: 10pt;
+    font-weight: bold;
+    color: black
+}
+
+/* Initially hide the full-screen div completely */
+#fullScreenDiv {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* semi-transparent background */
+    color: white;
+    display: none; /* Hide completely */
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    overflow: hidden;
+    flex-direction: row;
+    z-index: 1000;
+    transform: translateX(100%); /* Start off-screen to the right */
+    opacity: 0;
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+}
+
+/* When the div is displayed, override the 'display' property and start the animation */
+#fullScreenDiv.show {
+    display: flex; /* Show the div */
+    transform: translateX(0); /* Slide in from the right */
+    opacity: 1; /* Fade in */
+}
+
+/* Hide the div again after the animation */
+#fullScreenDiv.hidden {
+    transform: translateX(100%); /* Slide back to the right */
+    opacity: 0; /* Fade out */
+    display: none; /* Completely hide after animation */
+}
+
+#closeDivButton{
+    position: absolute;
+    right: 2%;
+    top: 2%;
+    background-color: red;
+    color: white;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    vertical-align: center;
+    align-items: center;
+    align-content: center;
+    flex-direction: row;
+    cursor: pointer;
+}
+
+.SearchArea{
+    width: 100%;
+    height: 8vh;
+    padding: 2%;
+}
+
+.ContentArea{
+    width: 100%;
+    height: 80vh;
+    padding: 2%;
+    overflow: auto;
+}
+
+#search-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: whitesmoke;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 20px auto;
+    max-width: 700px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#search-bar {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    padding: 10px;
+    font-size: 16px;
+    background-color: transparent;
+    font-family: 'Poppins', sans-serif;
+}
+
+
+.logo {
+    width: 80px;
+    height: 30px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+
+.search-icon {
+    width: 25px;
+    height: 25px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.search-icon {
+    margin-left: 10px;
+}
+
+.card {
+    background: linear-gradient(145deg, #ffffff, #e6e6e6);
+    border-radius: 16px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15), 0 6px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 350px;
+    font-family: 'Poppins', sans-serif;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    color: #333;
+    margin: 20px;
+}
+
+
+.grid-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.card {
+    background: linear-gradient(145deg, #ffffff, #e6e6e6);
+    border-radius: 16px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15), 0 6px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 350px;
+    font-family: 'Poppins', sans-serif;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    color: #333;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+}
+
+.card h3 {
+    margin-top: 0;
+    font-size: 24px;
+    color: #333;
+}
+
+.card p {
+    margin: 10px 0;
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
+}
+
+.card p strong {
+    font-weight: 600;
+    color: #222;
+}
+
+.case-status {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+}
+
+.case-status.solved {
+    background-color: #00c851;
+}
+
+.case-status.unsolved {
+    background-color: #ff4444;
+}
+
+.bank-info {
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.bank-logo {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+    border-radius: 50%;
+    background-color: white;
+    object-fit: contain;
+    overflow: hidden;
+}
+
+.card-details {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.card-details div {
+    width: 50%;
+    text-align: center;
+    font-size: 16px;
+}
+
+.card-details div span {
+    display: block;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+.card-details .amount-text {
+    font-size: 10px;
+    color: #777;
+}
+
+.police-station {
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.button {
+    background-color: #007bff;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    padding: 8px 16px;
+    text-align: center;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #0056b3;
+}
+
+/* Modal overlay */
+#modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+/* Modal overlay */
+#modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Modal content */
+#modal-content {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    max-width: 80vw;
+    width: 100%;
+    height: 85vh;
+    overflow: auto;
+    font-family: 'Poppins', sans-serif;
+    position: relative;
+}
+
+#modal-content h3 {
+    margin-top: 0;
+    font-size: 24px;
+    color: #333;
+}
+
+#modal-content p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
+}
+
+/* Bank info section */
+.bank-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.bank-logo {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+    object-fit: contain;
+}
+
+/* Transaction table */
+.transaction-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.transaction-table th, .transaction-table td {
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: left;
+}
+
+.transaction-table th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+}
+
+.transaction-table td {
+    font-size: 14px;
+    color: #555;
+}
+
+.amount-in-words {
+    font-style: italic;
+    color: #777;
+}
+
+.amount-in-numbers {
+    font-weight: bold;
+    color: #333;
+}
+
+/* Modal buttons */
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.modal-buttons button {
+    background-color: #007bff;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.modal-buttons button:hover {
+    background-color: #0056b3;
+}
+
+#close-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    color:black;
+}
