@@ -68,3 +68,7 @@ node_modules/
 #json
 .json
 *.json
+
+#openapi
+key.txt
+.env
