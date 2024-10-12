@@ -81,8 +81,8 @@ function ShowSubTransactions(box){
 
                 console.log("CS", to_account_number);
 
-                const newBoxTop = (boxRect.top + boxRect.height + (300) - (panY)) / scale;
-                const newBoxLeft = (((boxRect.left * scale) + (boxRect.width * scale) + (100)) * i - (panX)) / scale; // Alternate left-right positioning
+                const newBoxTop = boxRect.top + boxRect.height + 300 - panY;
+                const newBoxLeft = (boxRect.left + 100) * (i) - panX; // Alternate left-right positioning
 
                  newBox = createBox({
                     id: to_account_number, // Unique ID for each new box
