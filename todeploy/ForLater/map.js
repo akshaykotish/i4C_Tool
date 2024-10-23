@@ -62,7 +62,7 @@ function separateDataByStateAndCity(data) {
 
 // Function to load data from JSON
 function LoadData() {
-    fetch('leveldata.json')  // Fetch data from the JSON file
+    fetch('smalldata.json')  // Fetch data from the JSON file
         .then(response => response.json())  // Convert the response to JSON
         .then(data => {
             console.log(data.length);  // Log the number of records
