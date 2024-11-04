@@ -159,7 +159,7 @@ function createOrUpdateCurvedLink(box1, box2, path) {
 
     //console.log(panX, panY, controlPointX, controlPointY);
     //const pathData = `M ${box1CenterX} ${box1CenterY} Q ${controlPointX - 300} ${controlPointY + 300}, ${box2CenterX} ${box2CenterY}`;
-    const pathData = `M ${box1CenterX},${box1CenterY} Q ${controlPointX},${box1CenterY} ${box2CenterX}, ${box2CenterY - 250} T ${box2CenterX},${box2CenterY}`;
+    const pathData = `M ${box1CenterX},${box1CenterY} Q ${box1CenterX},${box2CenterY} ${box1CenterX}, ${box2CenterY} T ${box2CenterX},${box2CenterY}`;
     path.setAttribute("d", pathData);
 }
 
@@ -290,7 +290,7 @@ function createBox(boxData) {
     
     // Append all elements to the box
     box.appendChild(identificationRow);
-    box.appendChild(informationRow);
+    //box.appendChild(informationRow);
     box.appendChild(buttonContainer);
     
     // Append the box to the container
