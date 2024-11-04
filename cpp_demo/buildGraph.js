@@ -50,7 +50,7 @@ function BuildVictimsBox(victim, index) {
             "state": victim.state,
             "bank name": victim.bank_account.name,
             "bank account": victim.bank_account.account_number,
-            // "ifsc": victim.bank_account.ifsc,
+            // "ifsc": victim.bank_account.ifsc,    
         },
         icon: icons["men"],
     });
@@ -133,15 +133,15 @@ function ShowSubTransactions(box) {
                         //"from_bank_name": tx.from_bank_name,
                         // "from_name": tx.from_name,
                         "utr_id": tx.utr_id,
-                        "transaction_id": tx.transaction_id,
+                        // "transaction_id": tx.transaction_id,
                         "to_account_number": tx.to_account_number,
                         // "to_name": tx.to_name,
                         "to_bank_name": tx.to_bank_name,
-                        "account_number": tx.to_bank_details.account_number,
+                        // "account_number": tx.to_bank_details.account_number,
                         "ifsc": tx.to_bank_details.ifsc,
                         // "city": tx.to_bank_details.city,
                         "transaction_amount": tx.transaction_amount,
-                        "transaction_status": tx.transaction_status
+                        // "transaction_status": tx.transaction_status
                     }
                 });
                 count++;

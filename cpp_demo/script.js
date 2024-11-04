@@ -17,6 +17,69 @@ container.style.width = '100%';
 container.style.height = '100%';
 document.body.appendChild(container);
 
+// Add zoom in, zoom out, and drag move buttons
+const controlsContainer = document.createElement('div');
+controlsContainer.style.position = 'fixed';
+controlsContainer.style.bottom = '20px';
+controlsContainer.style.right = '20px';
+controlsContainer.style.display = 'flex';
+controlsContainer.style.flexDirection = 'column';
+controlsContainer.style.gap = '10px';
+controlsContainer.style.zIndex = '1000';
+document.body.appendChild(controlsContainer);
+
+// Zoom In button
+const zoomInButton = document.createElement('button');
+zoomInButton.innerText = '+';
+zoomInButton.style.width = '50px';
+zoomInButton.style.height = '50px';
+zoomInButton.style.fontSize = '24px';
+zoomInButton.style.cursor = 'pointer';
+zoomInButton.style.border = 'none';
+zoomInButton.style.color = 'black';
+controlsContainer.appendChild(zoomInButton);
+zoomInButton.addEventListener('click', function () {
+    zoom(1, { clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 });
+});
+
+// Zoom Out button
+const zoomOutButton = document.createElement('button');
+zoomOutButton.innerText = '-';
+zoomOutButton.style.width = '50px';
+zoomOutButton.style.height = '50px';
+zoomOutButton.style.fontSize = '24px';
+zoomOutButton.style.cursor = 'pointer';
+zoomOutButton.style.border = 'none';
+zoomOutButton.style.color = 'black';
+controlsContainer.appendChild(zoomOutButton);
+zoomOutButton.addEventListener('click', function () {
+    zoom(-1, { clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 });
+});
+
+// Drag Move button
+const dragMoveButton = document.createElement('button');
+dragMoveButton.innerText = 'Move';
+dragMoveButton.style.width = '50px';
+dragMoveButton.style.height = '50px';
+dragMoveButton.style.fontSize = '18px';
+dragMoveButton.style.cursor = 'pointer';
+dragMoveButton.style.border = 'none';
+dragMoveButton.style.color = 'black';
+controlsContainer.appendChild(dragMoveButton);
+
+dragMoveButton.addEventListener('mousedown', function (e) {
+    isPanning = true;
+    startX = e.clientX - panX;
+    startY = e.clientY - panY;
+    document.body.style.cursor = 'grab';
+});
+
+document.addEventListener('mouseup', function () {
+    isPanning = false;
+    document.body.style.cursor = 'default';
+});
+
+
 // Function to apply transformations for zoom and pan
 function applyTransformations() {
     container.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
