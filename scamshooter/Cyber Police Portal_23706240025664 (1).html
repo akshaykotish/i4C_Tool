@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<!-- saved from url=(0070)https://cyberpolice.nic.in/ncrpmha/pages/ComplainantDetailsadmin.aspx? -->
+<html><head id="Head1"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>
+	Cyber Police Portal
+</title><link rel="icon" href="https://cyberpolice.nic.in/ncrpmha/Images/favicon.ico" type="image/x-icon">
+    <script type="text/javascript">
+        //Stop Form Submission of Enter Key Press
+        function stopRKey(evt) {
+            var evt = (evt) ? evt : ((event) ? event : null);
+            var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+            if ((evt.keyCode == 13) && (node.type == "text")) { return false; }
+        }
+        document.onkeypress = stopRKey;
+    </script>
+    <script type="text/javascript">
+        function preventBack() { window.history.forward(); }
+        setTimeout("preventBack()", 0);
+        window.onunload = function () { null };
+    </script>
+    <script>
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .sidebar ul li {
+            border-bottom: none !important;
+        }
+
+        .new {
+            background: transparent;
+            border: none;
+            color: white;
+        }
+
+        .li1:hover {
+            background: #287aab;
+        }
+
+        .lblname {
+            border: 1px solid;
+            padding: 1px 3px 1px 3px;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .margin {
+            margin: -4px 0 0 0;
+        }
+
+        .footer_bottom {
+            background: #000!important;
+        }
+
+        .css-treeview ul,
+        .css-treeview li {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        .css-treeview input {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .css-treeview {
+            font: normal 11px "Segoe UI", Arial, Sans-serif;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+            .css-treeview a {
+                color: #00f;
+                text-decoration: none;
+            }
+
+                .css-treeview a:hover {
+                    text-decoration: underline;
+                }
+
+            .css-treeview input + label + ul {
+                margin: 0 0 0 22px;
+            }
+
+            .css-treeview input ~ ul {
+                display: none;
+            }
+
+            .css-treeview label,
+            .css-treeview label::before {
+                cursor: pointer;
+            }
+
+            .css-treeview input:disabled + label {
+                cursor: default;
+                opacity: .6;
+            }
+
+            .css-treeview input:checked:not(:disabled) ~ ul {
+                display: block;
+            }
+
+            .css-treeview label,
+            .css-treeview label::before {
+                /*background: url("../pages/css3-treeview/example/icons.png") no-repeat;*/
+            }
+
+                .css-treeview label,
+                .css-treeview a,
+                .css-treeview label::before {
+                    display: inline-block;
+                    height: 16px;
+                    line-height: 16px;
+                    vertical-align: middle;
+                    display: inline-block;
+                    height: 18px;
+                    line-height: 16px;
+                    vertical-align: middle;
+                    margin: 0px 0 0 0;
+                    font-size: 13px;
+                    color: #ffffff;
+                }
+
+            .css-treeview label {
+                background-position: 18px 0;
+                font-size: 13px;
+                margin: 10px 0px 10px -24px;
+                color: #ffffff;
+                font-weight: normal;
+            }
+
+                .css-treeview label::before {
+                    content: "";
+                    width: 16px;
+                    margin: 0 22px 0 0;
+                    vertical-align: middle;
+                    background-position: 0 -32px;
+                }
+
+            .css-treeview input:checked + label::before {
+                background-position: 0 -16px;
+            }
+
+        /* webkit adjacent element selector bugfix */
+        @media screen and (-webkit-min-device-pixel-ratio:0) {
+            .css-treeview {
+                -webkit-animation: webkit-adjacent-element-selector-bugfix infinite 1s;
+            }
+
+            @-webkit-keyframes webkit-adjacent-element-selector-bugfix {
+                from {
+                    padding: 0;
+                }
+
+                to {
+                    padding: 0;
+                }
+            }
+        }
+    </style>
+    
+    <style>
+        .nav .open > a, .nav .open > a:focus, .nav .open > a:hover {
+            background-color: rgba(78, 155, 222, 0.1) !important;
+            border-color: #337ab7 !important;
+        }
+
+        hr {
+            margin-top: 5px !important;
+            margin-bottom: 5px !important;
+            border: 0;
+            border-top: 1px solid #eee !important;
+        }
+    </style>
+    
+    <link href="./Cyber Police Portal_23706240025664_files/bootstrap.min.css" rel="stylesheet"><link href="./Cyber Police Portal_23706240025664_files/metisMenu.min.css" rel="stylesheet"><link href="./Cyber Police Portal_23706240025664_files/sb-admin-2.css" rel="stylesheet"><link href="./Cyber Police Portal_23706240025664_files/morris.css" rel="stylesheet"><link href="./Cyber Police Portal_23706240025664_files/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <style>
+        #side-menu {
+            display: none !important;
+        }
+
+        #page-wrapper {
+            margin: 0 0 0 0;
+        }
+
+        .dropdown-toggle {
+            display: none !important;
+        }
+
+        .sidebar-nav {
+            display: none !important;
+        }
+    </style>
+    <script>
+        function printDiv(divname) {
+            var printContents = document.getElementById(divname).innerHTML;
+            var originalContents = document.body.innerHTML;
+            document.body.innerHTML = printContents;
+            document.title = 'Full Details of Complaint Report';
+            window.print();
+            document.body.innerHTML = originalContents;
+            window.location.reload(false);
+            return false;
+        }
+    </script>
+    <style>
+        .float {
+            margin: 0px 0px 0px 15px;
+        }
+
+        .panel-default {
+            border-color: transparent !important;
+        }
+
+        .alert2 {
+            padding: 15px;
+            margin-bottom: -21px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+
+        .rep {
+            border: 1px dotted #8080801f;
+            margin: 0px 8px 0px 6px;
+            padding: 5px 5px 5px 5px;
+            box-shadow: 2px 2px 2px 2px #f9f5f5;
+        }
+
+        .form-control {
+            display: block;
+            margin: 0px 0px 5px 0px;
+            width: 92%;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+            -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        }
+
+        button, input, select, textarea {
+            font-family: inherit;
+            font-size: inherit;
+            line-height: inherit;
+        }
+
+        input {
+            line-height: normal;
+        }
+
+        .th {
+            padding: 10px;
+            width: 30%;
+        }
+
+        .td {
+            padding: 10px;
+            width: 70%;
+        }
+    </style>
+    <style>
+        .pagination-ys {
+            /*display: inline-block;*/
+            padding-left: 0;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+            .pagination-ys table > tbody > tr > td {
+                display: inline;
+            }
+
+                .pagination-ys table > tbody > tr > td > a,
+                .pagination-ys table > tbody > tr > td > span {
+                    position: relative;
+                    float: left;
+                    padding: 8px 12px;
+                    line-height: 1.42857143;
+                    text-decoration: none;
+                    color: #dd4814;
+                    background-color: #ffffff;
+                    border: 1px solid #dddddd;
+                    margin-left: -1px;
+                }
+
+                .pagination-ys table > tbody > tr > td > span {
+                    position: relative;
+                    float: left;
+                    padding: 8px 12px;
+                    line-height: 1.42857143;
+                    text-decoration: none;
+                    margin-left: -1px;
+                    z-index: 2;
+                    color: #aea79f;
+                    background-color: #f5f5f5;
+                    border-color: #dddddd;
+                    cursor: default;
+                }
+
+                .pagination-ys table > tbody > tr > td:first-child > a,
+                .pagination-ys table > tbody > tr > td:first-child > span {
+                    margin-left: 0;
+                    border-bottom-left-radius: 4px;
+                    border-top-left-radius: 4px;
+                }
+
+                .pagination-ys table > tbody > tr > td:last-child > a,
+                .pagination-ys table > tbody > tr > td:last-child > span {
+                    border-bottom-right-radius: 4px;
+                    border-top-right-radius: 4px;
+                }
+
+                .pagination-ys table > tbody > tr > td > a:hover,
+                .pagination-ys table > tbody > tr > td > span:hover,
+                .pagination-ys table > tbody > tr > td > a:focus,
+                .pagination-ys table > tbody > tr > td > span:focus {
+                    color: #97310e;
+                    background-color: #eeeeee;
+                    border-color: #dddddd;
+                }
+    </style>
+</head>
+<body class="skin-black-light sidebar-mini">
+
+    <form method="post" action="https://cyberpolice.nic.in/ncrpmha/pages/ComplainantDetailsadmin.aspx" id="form1">
+<div class="aspNetHidden">
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="">
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="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">
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['form1'];
+if (!theForm) {
+    theForm = document.form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="9F12154C">
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="tLGgc04vHrBhhvKLaQQgdhmaDU4cUYz49yxvV6WNoOPWhrI7vzIIHbbW3W08gmeTzZWQQc1TnL1dGQtggIMp+ZMIzy7OBRpIq2CgpKS0hyLr1HU3DFHA253CRrrWPMcJG3Aw8DYpvK+IOYzdlgvKRIS4Pmr7XOYZqBBrZDdNji+XseP8cbOCtxEY6PbfjBp4YXmcGyn4kJ7B8naaM6v1zCMJgpya4yDOrlVLc79ITfKTcH0A41IzERemxAn3V16wcT7GldsEA051YaIypilb7QZ6E2R1eWVWMx2SJQb1syuI2v0Ir9BYPq7wIfX/jgmiryB6wk+KznigtKQkhfJ7+gHqsGFwZbczBsbdTh7hopfBXsIF">
+</div>
+
+        <div style="background: #1e282c">
+            <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+
+                <div style="height: 95px; background: #fff">
+
+                    <div class="col-lg-5 col-xs-9 col-sm-4 col-md-4">
+                        <a class="navbar-brand" href="https://cyberpolice.nic.in/ncrpmha/pages/ComplainantDetailsadmin.aspx?#">
+                            <img class="img-responsive" src="./Cyber Police Portal_23706240025664_files/inner-logo.png" alt="Eve"></a>
+                    </div>
+
+                    <div class="col-lg-3 col-xs-3 col-sm-3 col-md-3" style="text-align: center;">
+                        <a class="navbar-brand">
+                            <p style="margin: 10px 0px 10px 0px;">
+                                <b class="fa fa-bookmark fa-fw" style="color: #000"></b>
+                                <span id="lblname" class="lblname" style="color: #000">MHA</span>
+                            </p>
+                            <p style="font-size: 14px; margin: 0px 0px 0px 29px;">
+                                
+
+                                
+                            </p>
+
+                            <p style="font-size: 14px; margin: 10px 0px 0px 29px; color: #000">
+                                Last Login:
+                        <span style="border: 1px dotted; padding: 1px 6px 1px 6px">
+                            <span id="lbllastlogin" style="color:#000000;">14/10/2024</span></span>
+                            </p>
+                            
+                        </a>
+                    </div>
+
+                    <div class="col-lg-2 col-xs-8 col-sm-3 col-md-3">
+                        <a class="navbar-brand" href="https://cyberpolice.nic.in/ncrpmha/pages/ComplainantDetailsadmin.aspx?#">
+                            <img class="img-responsive" src="./Cyber Police Portal_23706240025664_files/inner-logo-right.png" alt="Eve"></a>
+                    </div>
+
+
+                    <div class="col-lg-2 col-xs-4 col-sm-2 col-md-2">
+                        <ul class="nav navbar-top-links navbar-right">
+
+                            <li class="dropdown" style="margin: 14px 0 0 0;">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="https://cyberpolice.nic.in/ncrpmha/pages/ComplainantDetailsadmin.aspx?#" style="padding: 7px 5px 0px 6px;">
+                                    <i style="color: #000;" class="fa fa-user fa-fw"></i><i style="color: #000;" class="fa fa-caret-down"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-user">
+                                    
+                                            <li>
+                                                <a id="repprofile_lnkprofile_0" class="aspNetDisabled" style="text-decoration:none;">
+                                                        <i class="fa fa-user fa-fw" style="margin-right:5px"></i>
+                                                        Ravi Jain</a>
+
+                                            </li>
+
+                                            <hr>
+                                            <li>
+                                                <a id="repprofile_lnkupdateuserprofile_0" href="javascript:__doPostBack(&#39;ctl00$repprofile$ctl00$lnkupdateuserprofile&#39;,&#39;&#39;)">
+                                                   <i class="fa fa-user fa-fw" style="margin-right:5px"></i>
+                                                   View Profile
+                                                </a>
+
+                                            </li>
+                                            <hr>
+                                            <li>
+
+                                                <a id="repprofile_btnlogouttop_0" href="javascript:__doPostBack(&#39;ctl00$repprofile$ctl00$btnlogouttop&#39;,&#39;&#39;)">
+                                                        <i class="fa fa-arrow-circle-o-down fa-fw" style="margin-right:5px;font:bold"></i>
+                                                        Logout
+                                                </a>
+
+                                            </li>
+                                        
+                                </ul>                                
+                            </li>                           
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- /.navbar-header -->
+
+                <!-- /.navbar-top-links -->
+
+                <div class="navbar-default sidebar" role="navigation" style="margin: 21px 0px 50px 0px">
+                    <div class="sidebar-nav navbar-collapse">
+                        
+                        <div id="divadmin">
+                            <ul class="nav" id="side-menu" style="background: #222d32; font-size: 12px">                                                     
+                                <li id="licitizenfinancial" class="li1 bank"></li><li><a style="color: white" id="btn5" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/cybercrimeanalyticsreport.aspx"><i style="margin: 0 5px 0 0; color: white" class="fa fa-bank fa-fw"></i>Cyber Crime Analytics Report</a></li><li><a style="color: white" id="btn65" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/Dailydigest.aspx"><i style="margin: 0 5px 0 0; color: white" class="fa fa-edit fa-fw"></i>Daily Digest</a></li><li class="li1 Dashboard" id="li1Dashboard"><div class="css-treeview"><ul style="font-size: 19px;"><li><input type="checkbox" id="Dashboard-294903"><label for="Dashboard-294903"><i style="margin: 0 5px 0 0; color: #cece4b" class="fa fa-plus fa-fw"></i>Dashboard</label><ul style="margin: 0 0 0 0"><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-dashboard fa-fw"></i><a id="btn1" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/Statusdashboard.aspx">Dashboard</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-dashboard fa-fw"></i><a id="btn3" target="_blank" runat="server" href="https://cyberpolice.nic.in/ncrpmha/Mhadashboard/Default.aspx">Graphical Dashboard </a></li></ul></li></ul></div></li><li><a style="color: white" id="btn7" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/SelfQuerryAdmin.aspx"><i style="margin: 0 5px 0 0; color: white" class="fa fa-envelope fa-fw"></i>Inbox</a></li><li class="li1 Reports" id="li1Reports"><div class="css-treeview"><ul style="font-size: 19px;"><li><input type="checkbox" id="Reports-294903"><label for="Reports-294903"><i style="margin: 0 5px 0 0; color: #cece4b" class="fa fa-plus fa-fw"></i>Reports</label><ul style="margin: 0 0 0 0"><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn95" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/monthly_analysis_report.aspx">Month Wise Report</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn8" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/frmComplaintDashboard.aspx">Reports</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn9" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/catsubcatStatus.aspx">Category / Subcategory Wise report</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn10" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/SelfQuerryAdmin_ncrb.aspx">LEAs Last Login Details</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn11" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/CCTNSFlag.aspx">CCTNS Compliance</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn12" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/State_District_policeStatusReport.aspx">List of State/ Dist / PS</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn13" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/StatusQuerryAdmin_ncrb.aspx">Status wise report</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn62" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/SearchSuspect.aspx">Suspect Search</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn114" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/suspect_mobile_count.aspx">Suspect Mobile</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn121" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/ncrp_user_access_point_report.aspx">Login Logs</a></li></ul></li></ul></div></li><li class="li1 bank" id="libank"><div class="css-treeview"><ul style="font-size: 19px;" id="ulfinance"><li><input type="checkbox" id="item-11"><label for="item-11"><i style="margin: 0 5px 0 0; color: #cece4b" class="fa fa-plus fa-fw"></i>Citizen Fin. Fraud Reporting</label><ul style="margin: 0 0 0 0"><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="font-size: 16px; color: white" class="fa fa-link fa-fw"></i><a id="btn74" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/Graphical_dashboardof_CFCFRMS.aspx">Graphical Dashboard</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="font-size: 16px; color: white" class="fa fa-link fa-fw"></i><a id="btn14" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/PoliceOperatorTransaction.aspx">Reported Complaints</a></li><li><input type="checkbox" id="item-13"><label for="item-13"><i style="margin: 0 5px 0 0; color: #cece4b" class="fa fa-plus fa-fw"></i>Reports</label><ul style="margin: 0 0 0 0"><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="font-size: 16px; color: white" class="fa fa-link fa-fw"></i><a id="btn16" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/Bankstatusreport.aspx">Status Report</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="font-size: 16px; color: white" class="fa fa-link fa-fw"></i><a id="btn17" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/putonholdrecord.aspx">Put on Hold Report</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="font-size: 16px; color: white" class="fa fa-link fa-fw"></i><a id="btn69" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/cfcfrms_subcategorywise_dashboard.aspx">Sub Category Wise Report</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="font-size: 16px; color: white" class="fa fa-link fa-fw"></i><a id="btn70" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/cfcfrms_bankwise_MonthlyReports.aspx">Bank wise Monthly report</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="font-size: 16px; color: white" class="fa fa-link fa-fw"></i><a id="btn19" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/Bank_wise_login_informations.aspx">Bank/FIs on boarded</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="font-size: 16px; color: white" class="fa fa-link fa-fw"></i><a id="btn18" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/fraudulent_account_mssdp_report.aspx">Fraudulent Account Repository</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="font-size: 16px; color: white" class="fa fa-link fa-fw"></i><a id="btn78" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/Bankwise_min_max.aspx">Bank Avg. response Report</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="font-size: 16px; color: white" class="fa fa-link fa-fw"></i><a id="btn75" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/accused_bank_details.aspx">Accused Bank Details</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="font-size: 16px; color: white" class="fa fa-link fa-fw"></i><a id="btn20" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/suspectbasedsearch.aspx">Suspect Mobile</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="font-size: 16px; color: white" class="fa fa-link fa-fw"></i><a id="btn76" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/cryptocurrency_fraud_information.aspx">Crypto Currency Report</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="font-size: 16px; color: white" class="fa fa-link fa-fw"></i><a id="btn72" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/cfcfrms_Timeof_Occurence_ack.aspx">Date Wise Report</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="font-size: 16px; color: white" class="fa fa-link fa-fw"></i><a id="btn107" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/layerwisedata.aspx">Layer wise Report</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="font-size: 16px; color: white" class="fa fa-link fa-fw"></i><a id="btn88" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/fraudamount.aspx">Search Fraud Amount</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="font-size: 16px; color: white" class="fa fa-link fa-fw"></i><a id="btn96" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/atm-withdrawal.aspx">ATM Withdrawal Report</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="font-size: 16px; color: white" class="fa fa-link fa-fw"></i><a id="btn124" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/SearchAccount.aspx">Search Bulk Account No</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="font-size: 16px; color: white" class="fa fa-link fa-fw"></i><a id="btn122" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/ATMCheque_report.aspx">ATM / Cheque Withdrawal Report</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="font-size: 16px; color: white" class="fa fa-link fa-fw"></i><a id="btn108" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/bank_wise_hourly_report.aspx">Bank Wise Hourly</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="font-size: 16px; color: white" class="fa fa-link fa-fw"></i><a id="btn112" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/complaints_pushed_banks.aspx">Complaints Sent to Bank Reports</a></li></ul></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="font-size: 16px; color: white" class="fa fa-link fa-fw"></i><a id="btn56" target="_blank" runat="server" href="https://cyberpolice.nic.in/ncrpmha/Download/CFCFRMS_FAQ.pdf">FAQ</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="font-size: 16px; color: white" class="fa fa-link fa-fw"></i><a id="btn21" target="_blank" runat="server" href="https://cyberpolice.nic.in/ncrpmha/Download/instructionsforPolice.pdf">SOP</a></li></ul></li></ul></div></li><li class="li1 Blocking of Mobile No" id="li1Blocking of Mobile No"><div class="css-treeview"><ul style="font-size: 19px;"><li><input type="checkbox" id="BlockingofMobileNo-294903"><label for="BlockingofMobileNo-294903"><i style="margin: 0 5px 0 0; color: #cece4b" class="fa fa-plus fa-fw"></i>Blocking of Mobile No</label><ul style="margin: 0 0 0 0"><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn77" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/mobile_dashboard.aspx">Dashboard</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn84" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/MobileblockingDashboard_Statewise.aspx">Performance Report</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn99" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/weekly_report_mobile.aspx">Performance Report (Last 7 Days)</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn97" target="_blank" runat="server" href="https://cyberpolice.nic.in/ncrpmha/MobileBlockedDashboard/dashboard.aspx">Graphical Dashboard</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn93" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/MobileblockingDashboard.aspx">Self Query</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn110" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/BlockingmobPending_morethen3days.aspx">Pending More than 3 Days</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn92" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/tsp_median.aspx">TSP Median</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn86" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/lsa_tsp_mnp_all.aspx">Nodal Officer List</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn79" target="_blank" runat="server" href="https://cyberpolice.nic.in/ncrpmha/Download/CircularBlockofMobNobyStates_UT.pdf">Circular For Blocking Mobile No</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn109" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/BlockedNumberArchiveSearch.aspx">Mobile No. Archived Report</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn87" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/circular_mobileno.aspx">Circulars</a></li><li><input type="checkbox" id="BlockingofMobileNoPoS-294903"><label for="BlockingofMobileNoPoS-294903"><i style="margin: 0 5px 0 0; color: #cece4b" class="fa fa-plus fa-fw"></i>PoS</label><ul style="margin: 0 0 0 0"><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn117" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/view_pos_details.aspx">PoS Report</a></li></ul></li></ul></li></ul></div></li><li class="li1 Blocking of IMEI" id="li1Blocking of IMEI"><div class="css-treeview"><ul style="font-size: 19px;"><li><input type="checkbox" id="BlockingofIMEI-294903"><label for="BlockingofIMEI-294903"><i style="margin: 0 5px 0 0; color: #cece4b" class="fa fa-plus fa-fw"></i>Blocking of IMEI</label><ul style="margin: 0 0 0 0"><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn102" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/imei_dashboard.aspx">Dashboard</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn106" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/IMEIblockingDashboard_Statewise.aspx">Performance Report</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn98" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/imei_request_inbox.aspx">IMEI Inbox</a></li></ul></li></ul></div></li><li class="li1 CCTV Footage" id="li1CCTV Footage"><div class="css-treeview"><ul style="font-size: 19px;"><li><input type="checkbox" id="CCTVFootage-294903"><label for="CCTVFootage-294903"><i style="margin: 0 5px 0 0; color: #cece4b" class="fa fa-plus fa-fw"></i>CCTV Footage</label><ul style="margin: 0 0 0 0"><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn116" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/cctv-dashboard.aspx">CCTV Dashboard</a></li></ul></li></ul></div></li><li class="li1 Cyber Volunteers" id="li1Cyber Volunteers"><div class="css-treeview"><ul style="font-size: 19px;"><li><input type="checkbox" id="CyberVolunteers-294903"><label for="CyberVolunteers-294903"><i style="margin: 0 5px 0 0; color: #cece4b" class="fa fa-plus fa-fw"></i>Cyber Volunteers</label><ul style="margin: 0 0 0 0"><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn22" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/Volunteers_reg_count.aspx">Registration Details</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn23" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/Volunteers_rpt_countdash.aspx">Reported Content</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn24" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/cyberVolunteers_logs.aspx">Deactivation Logs</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn59" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/Cybervolreport.aspx">Search Volunteer</a></li></ul></li></ul></div></li><li class="li1 Suspect Registry" id="li1Suspect Registry"><div class="css-treeview"><ul style="font-size: 19px;"><li><input type="checkbox" id="SuspectRegistry-294903"><label for="SuspectRegistry-294903"><i style="margin: 0 5px 0 0; color: #cece4b" class="fa fa-plus fa-fw"></i>Suspect Registry</label><ul style="margin: 0 0 0 0"><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn101" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/Create_repository.aspx">Add Suspect Repository</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn123" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/Emailsend.aspx">Negative Repository Send Mail</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn27" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/ContentRemoved_verified.aspx">URL Repository</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn28" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/suspectRepository.aspx">Suspect Repository</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn115" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/suspect_data.aspx">Suspect Data</a></li></ul></li></ul></div></li><li class="li1 Keyword Repository" id="li1Keyword Repository"><div class="css-treeview"><ul style="font-size: 19px;"><li><input type="checkbox" id="KeywordRepository-294903"><label for="KeywordRepository-294903"><i style="margin: 0 5px 0 0; color: #cece4b" class="fa fa-plus fa-fw"></i>Keyword Repository</label><ul style="margin: 0 0 0 0"><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn29" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/Annkeywordrepositry.aspx">Validate Keyword</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn30" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/Annkeywordrepositryreject.aspx">Rejected Keyword</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn31" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/keywordrepositry.aspx">Add Keyword Localy</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn32" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/keywordrepositryview.aspx">Warning Status Update</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn33" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/ViewKeywordRepository.aspx">Keyword Statistics</a></li></ul></li></ul></div></li><li class="li1 Duplicate Tagging" id="li1Duplicate Tagging"><div class="css-treeview"><ul style="font-size: 19px;"><li><input type="checkbox" id="DuplicateTagging-294903"><label for="DuplicateTagging-294903"><i style="margin: 0 5px 0 0; color: #cece4b" class="fa fa-plus fa-fw"></i>Duplicate Tagging</label><ul style="margin: 0 0 0 0"><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn36" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/adminduplicatetaggingreport.aspx">Suspect Tagging</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn37" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/suspect_count.aspx">Suspect Tagging Count</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn38" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/tagginggraph.aspx">Suspect Analytical Report</a></li></ul></li></ul></div></li><li class="li1 Intermediary / Manage Nodals" id="li1Intermediary / Manage Nodals"><div class="css-treeview"><ul style="font-size: 19px;"><li><input type="checkbox" id="Intermediary/ManageNodals-294903"><label for="Intermediary/ManageNodals-294903"><i style="margin: 0 5px 0 0; color: #cece4b" class="fa fa-plus fa-fw"></i>Intermediary / Manage Nodals</label><ul style="margin: 0 0 0 0"><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn39" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/ManageIspDetail.aspx">Update Intermediary</a></li><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn40" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/ManageNodalofficer.aspx">Manage Nodal Officer</a></li></ul></li></ul></div></li><li class="li1 Resources" id="li1Resources"><div class="css-treeview"><ul style="font-size: 19px;"><li><input type="checkbox" id="Resources-294903"><label for="Resources-294903"><i style="margin: 0 5px 0 0; color: #cece4b" class="fa fa-plus fa-fw"></i>Resources</label><ul style="margin: 0 0 0 0"><li style="background: #607d8b; margin: 0px 0px 5px 0px; padding: 0px 0px 6px 0px;"><i style="margin: 0 5px 0 0; color: white" class="fa fa-link fa-fw"></i><a id="btn50" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/viewresourcedata.aspx">Resources from State/UTs</a></li></ul></li></ul></div></li><li><a style="color: white" id="btn48" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/infosearch.aspx"><i style="margin: 0 5px 0 0; color: white" class="fa fa-edit fa-fw"></i>Search by Additional Information</a></li><li><a style="color: white" id="btn58" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/transferbanktobank.aspx"><i style="margin: 0 5px 0 0; color: white" class="fa fa-edit fa-fw"></i>Manage Complaints</a></li><li><a style="color: white" id="btn53" runat="server" href="https://cyberpolice.nic.in/ncrpmha/pages/Changepasswordadmin.aspx"><i style="margin: 0 5px 0 0; color: white" class="fa fa-edit fa-fw"></i>Change Password</a></li> 
+                                <li style="margin-bottom: 5px;">
+                                    
+                                </li>                                                           
+                                <li style="margin-bottom: 40px;">
+                                    <a id="lnklogout" class="lg" href="javascript:__doPostBack(&#39;ctl00$lnklogout&#39;,&#39;&#39;)" style="color:White;"> <i style="margin: 0 5px 0 0;" class="fa fa-lock fa-fw"></i>Logout </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>                    
+                </div>
+                <!-- /.navbar-static-side -->
+            </nav>
+            
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <br>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <span style="text-align: center">
+                            <label class="control-label" style="font-size: 19px;">Complaint Type : </label>
+                            &nbsp;
+                            <span id="lblcrimetype" class="control-label" style="font-size: 19px; display: none;"></span>
+                            <span id="ContentPlaceHolder1_lblreport_type" class="control-label" style="font-size: 19px;">Report &amp; Track</span>
+                            <span id="ContentPlaceHolder1_lblpol">(Complaint Registered By Citizen)</span>
+
+                        </span>
+                        
+                        <input type="image" id="Img_icon_printer" onclick="printDiv(&#39;Divprint&#39;)" title="Click for print" src="./Cyber Police Portal_23706240025664_files/print_icon.jpg" style="border-width: 0px; width: 25px; float: right;">
+                        <input src="./Cyber Police Portal_23706240025664_files/pdf.png" name="ctl00$ContentPlaceHolder1$btn_pdfdownload" type="image" id="ContentPlaceHolder1_btn_pdfdownload" title="Click for print" style="border-width: 0px; width: 25px; float: right;">
+                    </div>
+                    <div id="Divprint">
+                        <div class="panel-body">
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <table style="width: 100%;">
+
+                                        <tbody><tr style="width: 100%">
+                                            <td style="width: 50%">
+                                                <label style="padding: 0px 5px 0 5px; font-weight: bold; margin: 0px 0px 3px 11px; text-align: left;" class="control-label">Acknowledgement No.</label></td>
+                                            <td style="width: 50%">
+                                                <span id="txtcrimeId" class="control-label">23706240025664</span></td>
+                                        </tr>
+
+
+                                        <tr>
+                                            <td>
+                                                <label style="padding: 0px 5px 0 5px; font-weight: bold; margin: 0px 0px 3px 11px" class="control-label">Category of Complaint</label></td>
+                                            <td>
+                                                <span id="ContentPlaceHolder1_txtcategoryCrime" class="control-label">Online Financial Fraud</span></td>
+                                        </tr>
+
+                                        <tr id="ContentPlaceHolder1_subcat">
+	<td>
+                                                <label style="padding: 0px 5px 0 5px; font-weight: bold; margin: 0px 0px 3px 11px" class="control-label">Sub Category of Complaint</label></td>
+	<td>
+                                                <span id="ContentPlaceHolder1_txtcrimesubcat" class="control-label">UPI Related Frauds</span></td>
+</tr>
+
+                                        
+                                        
+                                        
+                                        
+                                        
+
+                                        
+                                        
+                                        
+                                        <tr id="ContentPlaceHolder1_tr9">
+	<td>
+                                                <label style="padding: 0px 5px 0 5px; font-weight: bold; margin: 0px 0px 3px 11px" class="control-label">UserId</label></td>
+	<td>
+                                                <span id="ContentPlaceHolder1_lblAIuserid" class="control-label">darshika2403@gmail.com</span></td>
+</tr>
+
+                                        
+                                        
+
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        <tr id="ContentPlaceHolder1_tr24">
+	<td>
+                                                <label style="padding: 0px 5px 0 5px; font-weight: bold; margin: 0px 0px 3px 11px" class="control-label">Have You Lost Money</label>
+                                            </td>
+	<td>
+                                                <span id="ContentPlaceHolder1_lblAIhulm" class="control-label">Yes</span></td>
+</tr>
+
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        <tr id="ContentPlaceHolder1_trdate" style="width: 100%">
+	<td style="width: 40%">
+                                                <label style="padding: 0px 5px 0 5px; font-weight: bold; margin: 0px 0px 3px 11px" class="control-label">Incident Date/Time</label></td>
+	<td style="width: 60%">
+                                                <span id="ContentPlaceHolder1_txtcrimedate" class="control-label">03/06/2024 2 : 34 : PM</span></td>
+</tr>
+
+
+                                        <tr style="display: none">
+                                            <td>
+                                                <label style="padding: 0px 5px 0 5px; font-weight: bold; margin: 0px 0px 3px 11px" class="control-label">Complaint Time</label></td>
+                                            <td>
+                                                <span id="ContentPlaceHolder1_txtcrimetime" class="control-label">HH 2</span>
+                                                &nbsp;:&nbsp; 
+                                                                  <span id="ContentPlaceHolder1_lblMint" class="control-label">MM 34</span>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr id="ContentPlaceHolder1_trcomp1">
+	<td>
+                                                <div style="display: inline-block; padding: 6px; font-size: 20px; background: #f9f9f9; border: 1px solid #ccc; margin-bottom: 5px;">
+                                                    <span>Complainant / Victim Details</span>
+                                                </div>
+
+                                            </td>
+</tr>
+
+
+                                        <tr id="ContentPlaceHolder1_trcomp2">
+	<td>
+                                                <label style="padding: 0px 5px 0 5px; font-weight: bold; margin: 0px 0px 3px 11px" class="control-label">Name</label></td>
+	<td>
+                                                <span id="ContentPlaceHolder1_lblcfname" class="control-label">Darshika Mohanty</span>
+                                            </td>
+</tr>
+
+                                        <tr id="ContentPlaceHolder1_trcompgender">
+	<td>
+                                                <label style="padding: 0px 5px 0 5px; font-weight: bold; margin: 0px 0px 3px 11px" class="control-label">Gender</label></td>
+	<td>
+                                                <span id="ContentPlaceHolder1_lblgender" class="control-label">Female</span>
+                                            </td>
+</tr>
+
+                                        <tr id="ContentPlaceHolder1_trcompdob">
+	<td>
+                                                <label style="padding: 0px 5px 0 5px; font-weight: bold; margin: 0px 0px 3px 11px" class="control-label">Date of Birth (age)</label></td>
+	<td>
+                                                <span id="ContentPlaceHolder1_lblcompdob" class="control-label">24/03/2002 Age (22 Years ) </span>
+                                            </td>
+</tr>
+
+                                        <tr id="ContentPlaceHolder1_trcomp3">
+	<td>
+                                                <label style="padding: 0px 5px 0 5px; font-weight: bold; margin: 0px 0px 3px 11px" class="control-label">Mobile</label></td>
+	<td>
+                                                <span id="ContentPlaceHolder1_lblmobile" class="control-label">7327939600</span></td>
+</tr>
+
+
+                                        <tr id="ContentPlaceHolder1_trcomp4">
+	<td>
+                                                <label style="padding: 0px 5px 0 5px; font-weight: bold; margin: 0px 0px 3px 11px" class="control-label">Father/Mother / Spouse Name</label></td>
+	<td>
+                                                <span id="ContentPlaceHolder1_lblfathermother" class="control-label"></span></td>
+</tr>
+
+
+                                        <tr id="ContentPlaceHolder1_trcomp5">
+	<td>
+                                                <label style="padding: 0px 5px 0 5px; font-weight: bold; margin: 0px 0px 3px 11px" class="control-label">Email</label></td>
+	<td>
+                                                <span id="ContentPlaceHolder1_lblcompemail" class="control-label">darshika2403@gmail.com</span></td>
+</tr>
+
+
+
+                                        <tr id="ContentPlaceHolder1_trcomp6">
+	<td>
+                                                <label style="padding: 0px 5px 0 5px; font-weight: bold; margin: 0px 0px 3px 11px" class="control-label">Street Name</label></td>
+	<td>
+                                                <span id="ContentPlaceHolder1_lblcompstreet" class="control-label">Whitefield Kondapur</span></td>
+</tr>
+
+
+                                        <tr id="ContentPlaceHolder1_trcomp7">
+	<td>
+                                                <label style="padding: 0px 5px 0 5px; font-weight: bold; margin: 0px 0px 3px 11px" class="control-label">House No</label></td>
+	<td>
+                                                <span id="ContentPlaceHolder1_lblcomphouseno" class="control-label">305</span></td>
+</tr>
+
+                                        <tr id="ContentPlaceHolder1_trcomp8">
+	<td>
+                                                <label style="padding: 0px 5px 0 5px; font-weight: bold; margin: 0px 0px 3px 11px" class="control-label">Colony</label></td>
+	<td>
+                                                <span id="ContentPlaceHolder1_lblcompcolony" class="control-label">Aditya Heights</span></td>
+</tr>
+
+                                        <tr id="ContentPlaceHolder1_trcomp9">
+	<td>
+                                                <label style="padding: 0px 5px 0 5px; font-weight: bold; margin: 0px 0px 3px 11px" class="control-label">Village/ Town</label></td>
+	<td>
+                                                <span id="ContentPlaceHolder1_lblcompvillagetown" class="control-label">Hyderabad</span></td>
+</tr>
+
+                                        <tr id="ContentPlaceHolder1_trcomp10">
+	<td>
+                                                <label style="padding: 0px 5px 0 5px; font-weight: bold; margin: 0px 0px 3px 11px" class="control-label">Tehsil</label></td>
+	<td>
+                                                <span id="ContentPlaceHolder1_lblcomptehsil" class="control-label"></span></td>
+</tr>
+
+                                        <tr id="ContentPlaceHolder1_trcomp11">
+	<td>
+                                                <label style="padding: 0px 5px 0 5px; font-weight: bold; margin: 0px 0px 3px 11px" class="control-label">Pincode</label></td>
+	<td>
+                                                <span id="ContentPlaceHolder1_lblcomppincode" class="control-label">500081</span></td>
+</tr>
+
+                                        <tr id="ContentPlaceHolder1_trcomp12">
+	<td>
+                                                <label style="padding: 0px 5px 0 5px; font-weight: bold; margin: 0px 0px 3px 11px" class="control-label">Police Station</label></td>
+	<td>
+                                                <span id="ContentPlaceHolder1_txtpolicestation" class="control-label">Cyber Crime</span></td>
+</tr>
+
+                                        <tr id="ContentPlaceHolder1_trcomp13">
+	<td>
+                                                <label style="padding: 0px 5px 0 5px; font-weight: bold; margin: 0px 0px 3px 11px" class="control-label">District</label></td>
+	<td>
+                                                <span id="ContentPlaceHolder1_txtdistrict" class="control-label">CYBERABAD</span></td>
+</tr>
+
+                                        <tr id="ContentPlaceHolder1_trcomp14">
+	<td>
+                                                <label style="padding: 0px 5px 0 5px; font-weight: bold; margin: 0px 0px 3px 11px" class="control-label">State</label></td>
+	<td>
+                                                <span id="ContentPlaceHolder1_txtstate" class="control-label">TELANGANA</span></td>
+</tr>
+
+
+                                        <tr id="ContentPlaceHolder1_trcomp15">
+	<td>
+                                                <label style="padding: 0px 5px 0 5px; font-weight: bold; margin: 0px 0px 3px 11px" class="control-label">Relation with Victim</label></td>
+	<td>
+                                                <span id="ContentPlaceHolder1_lblvictrel" class="control-label">Self</span></td>
+</tr>
+
+
+                                        <tr style="display: none">
+                                            <td>
+                                                <label style="padding: 0px 5px 0 5px; font-weight: bold; margin: 0px 0px 3px 11px" class="control-label">Suspect Name</label></td>
+                                            <td>
+                                                <span id="ContentPlaceHolder1_txtsuspectname" class="control-label"></span></td>
+                                        </tr>
+
+                                    </tbody></table>
+
+                                    <table>
+                                        <tbody><tr>
+                                            <td>
+                                                <div style="display: inline-block; padding: 6px; font-size: 20px; background: #f9f9f9; border: 1px solid #ccc; margin-bottom: 5px;">
+                                                    <span>Suspect Details</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody></table>
+
+                                    <div>
+
+</div>
+
+                                    <br>
+
+                                    
+                                    <hr>
+
+
+                                    <table style="width: 100%">
+                                        
+                                        
+
+                                        
+                                        
+                                        
+                                        
+
+                                        
+                                        
+                                        
+                                        
+
+                                        
+
+                                        <tbody><tr id="ContentPlaceHolder1_trsuspincode">
+	<td>
+                                                <label style="padding: 0px 5px 0 5px; font-weight: bold; margin: 0px 0px 3px 11px" class="control-label">Pincode</label></td>
+	<td>
+                                                <span id="ContentPlaceHolder1_txtsuspincode" class="control-label"></span></td>
+</tr>
+
+                                        <tr>
+                                            <td>
+                                                <label style="padding: 0px 5px 0 5px; font-weight: bold; margin: 0px 0px 3px 11px" class="control-label">Complaint Additional Info</label></td>
+                                            <td>
+                                                <span id="ContentPlaceHolder1_txtcrimeAddInfo" class="control-label">I got a call in the name of fedex, that some parcel in my name got stuck in customs mumbai aiport. The call then transferred to NCB department, where they took my aadhar card and took my last 6 months bank details. They asked me to transfer money 98412</span></td>
+                                        </tr>
+
+                                    </tbody></table>
+
+                                    <div id="ContentPlaceHolder1_div1" style="margin-top: 18px">
+                                        <div style="display: inline-block; padding: 6px; font-size: 20px; background: #f9f9f9; border: 1px solid #ccc; margin-bottom: 5px;">
+                                            <span>Fraudulent Transaction Details   <i class="fa fa-money"></i></span>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <p style="margin-right: 5px; font-weight: bold">
+                                                    Total Fraudulent Amount reported by complainant : <i class="fa fa-rupee fa-fw" style="font-weight: bold; color: red"></i>
+                                                    <span id="ContentPlaceHolder1_lbltotalfraudlentamt" style="font-weight:bold;font-weight: bold; color: red"> 94,132.00</span>
+                                                </p>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div id="ContentPlaceHolder1_divBankTrnDetailsPrvdeb" class="panel-heading" style="display: inline-block; padding: 6px; font-size: 15px; background: #f9f9f9; border: 1px solid #ccc; margin-bottom: 5px;">
+                                        <b>Victim Account Details: </b>
+                                    </div>
+                                    <div>
+	<table class="table table-striped table-bordered table-hover" cellspacing="0" rules="all" border="1" id="ContentPlaceHolder1_gv_ActiontakenStatus" style="border-color:#CCCCCC;border-style:None;width:100%;border-collapse:collapse;">
+		<tbody><tr style="color:White;background-color:#316395;">
+			<th scope="col">S No.</th><th scope="col">Account No./ Wallet ID</th><th scope="col">Transaction ID</th><th scope="col">Card Details</th><th scope="col">Transaction Amount</th><th scope="col">Reference No.</th><th scope="col">Transaction Date &amp; Time</th><th scope="col">Complaint Date</th><th scope="col">Bank/ (Wallet /PG/PA)/ Merchant / Insurance</th>
+		</tr><tr style="color:#333333;background-color:White;">
+			<td>
+                                                    1
+                                                </td><td>
+                                                    <span id="ContentPlaceHolder1_gv_ActiontakenStatus_lblaccount_0">Google Pay -:921010037122499</span>
+                                                </td><td>
+                                                    <span id="ContentPlaceHolder1_gv_ActiontakenStatus_lbltransid_0">452104770167</span>
+                                                </td><td>
+                                                    <div style="display:none">
+                                                        <b>
+                                                            <span id="ContentPlaceHolder1_gv_ActiontakenStatus_lblcardtype_0" style="color:Red;">0</span></b>
+                                                    </div>
+                                                    <p>
+                                                        </p><div style="display:none">
+
+                                                            <b>First Six Digit:</b> 0
+                                                        </div>
+                                                    <p></p>
+                                                    <p>
+                                                        </p><div style="display:none">
+                                                            <b>Last Four Digit:</b> 0
+                                                        </div>
+                                                    <p></p>
+                                                    <p>
+                                                        </p><div style="display:none">
+                                                            <b>Card Length:</b> 0
+                                                        </div>
+                                                    <p></p>
+                                                    <p>
+                                                        </p><div style="display:none">
+                                                            <b>Reg. Mobile:</b> 
+                                                        </div>
+                                                    <p></p>
+                                                    <p>
+                                                        </p><div style="display:none">
+                                                            <b>Reg. Email:</b> 
+                                                        </div>
+                                                    <p></p>
+                                                </td><td>
+                                                    <span id="ContentPlaceHolder1_gv_ActiontakenStatus_lblamnt_0"> 94,132.00</span>
+                                                </td><td>
+                                                    <span id="ContentPlaceHolder1_gv_ActiontakenStatus_lblrem_0">CICAgPC6ilGEAg</span>
+                                                </td><td>
+                                                    <span id="ContentPlaceHolder1_gv_ActiontakenStatus_lbldate_0">03/06/2024 14:34:PM</span>
+                                                </td><td>
+                                                    <span id="ContentPlaceHolder1_gv_ActiontakenStatus_lblcdate_0">03/06/2024 20:25:PM</span>
+                                                </td><td>
+                                                    <b>
+                                                        <span id="ContentPlaceHolder1_gv_ActiontakenStatus_lbltranstype_0"></span></b>
+                                                    <div style="">
+                                                        <i style="color: red" class="fa fa-bank"></i>
+                                                        <span id="ContentPlaceHolder1_gv_ActiontakenStatus_lblpbankname_0">Axis Bank</span>
+                                                        <div style="display:none">
+                                                            <hr>
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </td>
+		</tr>
+	</tbody></table>
+</div>
+
+                                    
+                                    <div>
+
+</div>
+
+
+                                    <div id="ContentPlaceHolder1_divVictimInformation" tyle="margin: 9px; padding: 1px 4px 1px 4px">
+
+                                        <h4 style="margin: 4px 4px 5px 7px; text-align: left">Victim Information</h4>
+                                        <hr>
+                                        <div>
+	<table class="table table-striped table-bordered table-hover" cellspacing="0" rules="all" border="1" id="ContentPlaceHolder1_repAIpath" style="width:100%;border-collapse:collapse;">
+		<tbody><tr style="color:White;background-color:#316395;font-size:13px;">
+			<th scope="col">S No.</th><th scope="col">View / Download Victim National ID.</th>
+		</tr><tr style="color:#333333;background-color:White;">
+			<td>
+                                                        1
+                                                    </td><td>
+                                                        <a id="ContentPlaceHolder1_repAIpath_lblfilename2_0" class="control-label" href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$repAIpath$ctl02$lblfilename2&#39;,&#39;&#39;)">NationalId202406032025147111080.pdf</a>
+                                                    </td>
+		</tr>
+	</tbody></table>
+</div>
+                                    </div>
+
+
+                                    
+                                    <div id="ContentPlaceHolder1_divContentAvailable" style="margin: 9px; padding: 1px 4px 1px 4px" class="table table-responsive">
+                                        <h4 style="margin: 4px 4px 5px 7px; text-align: left">Supporting Evidence : </h4>
+                                        <hr>
+                                        <div>
+	<table class="table table-striped table-bordered table-hover" cellspacing="0" cellpadding="2" id="ContentPlaceHolder1_gv_InformationSource" style="border-collapse:collapse;">
+		<tbody><tr style="color:White;background-color:#316395;">
+			<th scope="col">S.No.</th><th scope="col">Description</th><th scope="col">Text Information</th><th scope="col">Supporting Evidence</th>
+		</tr><tr style="color:#333333;background-color:White;">
+			<td align="left">
+                                                        1
+                                                    </td><td align="left">Other</td><td align="left">Via Phone Call and Skype</td><td align="left">
+                                                        <a id="ContentPlaceHolder1_gv_InformationSource_lnkConteavail_0" class="link" href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$gv_InformationSource$ctl02$lnkConteavail&#39;,&#39;&#39;)">Evidence202406032020448887932.pdf</a>
+                                                    </td>
+		</tr>
+	</tbody></table>
+</div>
+                                    </div>
+
+                                    <div style="margin: 9px; padding: 1px 4px 1px 4px">
+                                        <table border="1" style="width: 100%">
+                                            <tbody><tr style="background: #316395; color: white;">
+                                                <td style="padding: 5px;">
+                                                    <label>File Name</label>
+                                                </td>
+                                                <td style="padding: 5px;">
+                                                    <label>MD5</label></td>
+                                                <td style="padding: 5px;">
+                                                    <label>SHA 256</label></td>
+                                            </tr>
+                                            
+                                                    <tr>
+
+                                                        <td style="padding: 5px; word-break: break-all;">
+                                                            <span id="ContentPlaceHolder1_repevidensha_lblfilenameev_0">Evidence202406032020448887932.pdf</span>
+                                                        </td>
+                                                        <td style="padding: 5px; word-break: break-all">
+                                                            <span id="ContentPlaceHolder1_repevidensha_lblsha_0">3445C5A1F991ACE9F6C3688A7DEF7AC6</span>
+
+                                                        </td>
+                                                        <td style="padding: 5px; word-break: break-all">
+                                                            <span id="ContentPlaceHolder1_repevidensha_lblsha256_0">CA11A3D09CB1B3FE4CC643D972538E727DD7177774004C232E10A468FCF89728</span>
+
+                                                        </td>
+
+                                                    </tr>
+                                                
+
+                                        </tbody></table>
+                                    </div>
+
+                                    
+
+                                    <div id="ContentPlaceHolder1_divmodeofExists" class="row" style="margin: 7px; padding: 1px 4px 1px 4px">
+                                        <h4 style="margin: 4px 4px 5px 7px; text-align: left"><b style="margin-right: 5px; font-weight: bold">Total Fraudulent Amount reported by complainant-: <i class="fa fa-rupee fa-fw" style="font-weight: bold; color: red"></i></b>
+                                            <span id="ContentPlaceHolder1_lblbreportedamt" style="font-weight:bold;font-weight: bold; color: red"> 94,132.00</span>
+                                        </h4>
+                                        <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
+                                            <div>
+	<table class="table table-striped table-bordered table-hover" cellspacing="0" rules="all" border="1" id="ContentPlaceHolder1_grid_amount_modetype" style="border-collapse:collapse;">
+		<tbody><tr style="color:White;background-color:#316395;">
+			<th scope="col" style="width:5%;">S.No.</th><th scope="col" style="width:25%;">&nbsp;</th><th scope="col" style="width:20%;">Amount</th>
+		</tr><tr style="color:#333333;background-color:White;">
+			<td>
+                                                            1
+                                                        </td><td style="height:30px;">
+                                                            <span id="ContentPlaceHolder1_grid_amount_modetype_lblptype_0">Wrong Transaction</span>
+                                                        </td><td>
+                                                            <span id="ContentPlaceHolder1_grid_amount_modetype_lbl_withdrawal_0" style="color:Red;">Rs.  0.00</span>
+                                                        </td>
+		</tr>
+	</tbody></table>
+</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div id="ContentPlaceHolder1_divdebit" class="col-md-12 col-lg-12 col-sm-12 col-xs-12" style="margin-top: 10px">
+                                            <h4 style="margin: 4px 4px 5px 7px; text-align: left"><b>Action Taken  by Bank</b> <i class="fa fa-money"></i></h4>
+                                            <a id="ContentPlaceHolder1_lblTrail" title="Click For View Complete Trail" href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$lblTrail&#39;,&#39;&#39;)" style="font-weight: bolder; color: darkblue; font-size: 16px; text-align: center; margin-left: 20px">
+                                                View Complete Trail
+                                                <img id="ContentPlaceHolder1_Image1" src="./Cyber Police Portal_23706240025664_files/new.gif" style="height:15px;"></a>
+                                            <input src="./Cyber Police Portal_23706240025664_files/excel.png" name="ctl00$ContentPlaceHolder1$Img_excel" type="image" id="ContentPlaceHolder1_Img_excel" title="Click for excel" style="border-width: 0px; width: 25px; float: right">
+                                            <hr>
+                                            <table id="ContentPlaceHolder1_dtlistbankaction" cellspacing="0" style="border-collapse:collapse;">
+	<tbody><tr>
+		<td>
+
+                                                    <span id="ContentPlaceHolder1_dtlistbankaction_lblactiontype_0" style="font-size:Large;font-weight:bold;">Money Transfer to</span>
+                                                    <div>
+			<table class="table table-striped table-bordered table-hover" cellspacing="0" rules="all" border="1" id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0" style="color:#333333;border-style:None;width:100%;border-collapse:collapse;">
+				<tbody><tr style="color:White;background-color:#316395;">
+					<th scope="col" style="background-color:Gray;">S No.</th><th scope="col" style="background-color:Gray;width:250px;">Account No./ (Wallet /PG/PA) Id<hr>Transaction Id / UTR Number</th><th scope="col">Bank /FIs</th><th scope="col">Account No./IFSC Code</th><th scope="col">Transaction ID /UTR Number</th><th scope="col">Transaction Date &amp; Time</th><th scope="col">Transaction Amount</th><th scope="col">Disputed Amount</th><th scope="col" style="width:300px;">Reference No / Remarks</th><th scope="col" style="width:190px;">Action Taken By</th><th scope="col">Date of Action</th>
+				</tr><tr style="color:#333333;background-color:White;">
+					<td>
+                                                                    1
+                                                                    
+                                                                </td><td>
+                                                                    
+                                                                    <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lblppprootaccntidmany_0" class="wordbreak" style="word-wrap: normal; word-break: break-all;">Google Pay -:921010037122499</span>
+                                                                    <hr>
+                                                                    <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lblpproottransidmany_0" class="wordbreak" style="word-wrap: normal; word-break: break-all;">452104770167</span>
+
+                                                                </td><td>
+                                                                    <span>Federal Bank</span>
+                                                                    <div style="display:none"></div>
+
+                                                                    <div style="display:none">
+                                                                        <hr>
+                                                                        Merchant : 
+                                                                    </div>
+                                                                    <div style="display:none">
+                                                                        <hr>
+                                                                        Wallet /PG/PA : 
+                                                                    </div>
+                                                                    <div style="display:none">
+                                                                        <hr>
+                                                                        
+                                                                    </div>
+                                                                    
+                                                                    <hr>
+                                                                    <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lblplayers_0" style="color:Maroon;font-size:12px;font-weight:bold;">Layer : 1</span>
+                                                                </td><td>
+                                                                    <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lblacounta_0" style="word-wrap: normal; word-break: break-all;">11820200047411</span>
+                                                                    <div style="">
+                                                                        <hr>
+                                                                        fdrl0001099
+                                                                    </div>
+                                                                    <div style="display:none">
+                                                                    </div>
+                                                                </td><td>
+                                                                    <div style="display:display">
+                                                                        <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lbltransid_0">452104770167</span>
+                                                                    </div>
+                                                                </td><td>
+                                                                    <div style="display:display">
+                                                                        03/06/2024 12:00:00 AM
+                                                                    </div>
+                                                                    <div style="display:none">
+                                                                        03/06/2024 
+                                                                    </div>
+                                                                </td><td>
+                                                                    <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lbloamnt_0"> 94,132.00</span>
+                                                                </td><td>
+                                                                    <div style="color: red; ">
+                                                                         94,132.00
+                                                                    </div>
+                                                                </td><td>
+                                                                    <p style="display:none,word-wrap: normal; word-break: break-all">
+                                                                        
+                                                                    </p>
+                                                                    <p style=",word-wrap: normal; word-break: break-all">
+                                                                        <br>
+                                                                        DUMMY NAME
+                                                                    </p>
+                                                                    <a id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lnkConteavailadd_0" class="link" href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$dtlistbankaction$ctl00$gedotherbank$ctl02$lnkConteavailadd&#39;,&#39;&#39;)"></a>
+                                                                    
+                                                                </td><td>
+                                                                    <p>
+                                                                        <i class="fa fa-bank"></i>
+                                                                        <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lblbankname_0">Axis Bank</span>
+                                                                    </p>
+                                                                </td><td>
+                                                                    <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lblodate_0">04/06/2024 08:21:AM</span>
+                                                                </td>
+				</tr><tr style="color:#333333;background-color:White;">
+					<td>
+                                                                    2
+                                                                    
+                                                                </td><td>
+                                                                    
+                                                                    <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lblppprootaccntidmany_1" class="wordbreak" style="word-wrap: normal; word-break: break-all;">11820200047411</span>
+                                                                    <hr>
+                                                                    <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lblpproottransidmany_1" class="wordbreak" style="word-wrap: normal; word-break: break-all;">452104770167</span>
+
+                                                                </td><td>
+                                                                    <span>Airtel Payments Bank</span>
+                                                                    <div style="display:none"></div>
+
+                                                                    <div style="display:none">
+                                                                        <hr>
+                                                                        Merchant : 
+                                                                    </div>
+                                                                    <div style="display:none">
+                                                                        <hr>
+                                                                        Wallet /PG/PA : 
+                                                                    </div>
+                                                                    <div style="display:none">
+                                                                        <hr>
+                                                                        
+                                                                    </div>
+                                                                    
+                                                                    <hr>
+                                                                    <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lblplayers_1" style="color:Maroon;font-size:12px;font-weight:bold;">Layer : 2</span>
+                                                                </td><td>
+                                                                    <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lblacounta_1" style="word-wrap: normal; word-break: break-all;">1108874121</span>
+                                                                    <div style="">
+                                                                        <hr>
+                                                                        AIRP0000001
+                                                                    </div>
+                                                                    <div style="display:none">
+                                                                    </div>
+                                                                </td><td>
+                                                                    <div style="display:display">
+                                                                        <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lbltransid_1">415514355361</span>
+                                                                    </div>
+                                                                </td><td>
+                                                                    <div style="display:display">
+                                                                        03/06/2024 12:00:00 AM
+                                                                    </div>
+                                                                    <div style="display:none">
+                                                                        03/06/2024 
+                                                                    </div>
+                                                                </td><td>
+                                                                    <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lbloamnt_1"> 61,053.00</span>
+                                                                </td><td>
+                                                                    <div style="color: red; ">
+                                                                         61,053.00
+                                                                    </div>
+                                                                </td><td>
+                                                                    <p style="display:none,word-wrap: normal; word-break: break-all">
+                                                                        
+                                                                    </p>
+                                                                    <p style=",word-wrap: normal; word-break: break-all">
+                                                                        <br>
+                                                                        FT IMPS/IFO/415514355361/AIRP0000001/ C73003062414
+                                                                    </p>
+                                                                    <a id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lnkConteavailadd_1" class="link" href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$dtlistbankaction$ctl00$gedotherbank$ctl03$lnkConteavailadd&#39;,&#39;&#39;)"></a>
+                                                                    
+                                                                </td><td>
+                                                                    <p>
+                                                                        <i class="fa fa-bank"></i>
+                                                                        <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lblbankname_1">Federal Bank</span>
+                                                                    </p>
+                                                                </td><td>
+                                                                    <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lblodate_1">04/06/2024 09:05:AM</span>
+                                                                </td>
+				</tr><tr style="color:#333333;background-color:White;">
+					<td>
+                                                                    3
+                                                                    
+                                                                </td><td>
+                                                                    
+                                                                    <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lblppprootaccntidmany_2" class="wordbreak" style="word-wrap: normal; word-break: break-all;">11820200047411</span>
+                                                                    <hr>
+                                                                    <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lblpproottransidmany_2" class="wordbreak" style="word-wrap: normal; word-break: break-all;">452104770167</span>
+
+                                                                </td><td>
+                                                                    <span>Airtel Payments Bank</span>
+                                                                    <div style="display:none"></div>
+
+                                                                    <div style="display:none">
+                                                                        <hr>
+                                                                        Merchant : 
+                                                                    </div>
+                                                                    <div style="display:none">
+                                                                        <hr>
+                                                                        Wallet /PG/PA : 
+                                                                    </div>
+                                                                    <div style="display:none">
+                                                                        <hr>
+                                                                        
+                                                                    </div>
+                                                                    
+                                                                    <hr>
+                                                                    <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lblplayers_2" style="color:Maroon;font-size:12px;font-weight:bold;">Layer : 2</span>
+                                                                </td><td>
+                                                                    <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lblacounta_2" style="word-wrap: normal; word-break: break-all;">1108874121</span>
+                                                                    <div style="">
+                                                                        <hr>
+                                                                        AIRP0000001
+                                                                    </div>
+                                                                    <div style="display:none">
+                                                                    </div>
+                                                                </td><td>
+                                                                    <div style="display:display">
+                                                                        <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lbltransid_2">415514358200</span>
+                                                                    </div>
+                                                                </td><td>
+                                                                    <div style="display:display">
+                                                                        03/06/2024 12:00:00 AM
+                                                                    </div>
+                                                                    <div style="display:none">
+                                                                        03/06/2024 
+                                                                    </div>
+                                                                </td><td>
+                                                                    <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lbloamnt_2"> 3,00,000.00</span>
+                                                                </td><td>
+                                                                    <div style="color: red; ">
+                                                                         33,079.00
+                                                                    </div>
+                                                                </td><td>
+                                                                    <p style="display:none,word-wrap: normal; word-break: break-all">
+                                                                        
+                                                                    </p>
+                                                                    <p style=",word-wrap: normal; word-break: break-all">
+                                                                        <br>
+                                                                        FT IMPS/IFO/415514358200/AIRP0000001/ C79003062414
+                                                                    </p>
+                                                                    <a id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lnkConteavailadd_2" class="link" href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$dtlistbankaction$ctl00$gedotherbank$ctl04$lnkConteavailadd&#39;,&#39;&#39;)"></a>
+                                                                    
+                                                                </td><td>
+                                                                    <p>
+                                                                        <i class="fa fa-bank"></i>
+                                                                        <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lblbankname_2">Federal Bank</span>
+                                                                    </p>
+                                                                </td><td>
+                                                                    <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_0_lblodate_2">04/06/2024 09:05:AM</span>
+                                                                </td>
+				</tr>
+			</tbody></table>
+		</div>
+
+
+                                                </td>
+	</tr><tr>
+		<td>
+
+                                                    <span id="ContentPlaceHolder1_dtlistbankaction_lblactiontype_1" style="font-size:Large;font-weight:bold;">Wrong Transaction</span>
+                                                    <div>
+			<table class="table table-striped table-bordered table-hover" cellspacing="0" rules="all" border="1" id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_1" style="color:#333333;border-style:None;width:100%;border-collapse:collapse;">
+				<tbody><tr style="color:White;background-color:#316395;">
+					<th scope="col" style="background-color:Gray;">S No.</th><th scope="col" style="background-color:Gray;width:250px;">Account No./ (Wallet /PG/PA) Id<hr>Transaction Id / UTR Number</th><th scope="col">Bank /FIs</th><th scope="col">Transaction Date &amp; Time</th><th scope="col">Transaction Amount</th><th scope="col" style="width:300px;">Reference No / Remarks</th><th scope="col" style="width:190px;">Action Taken By</th><th scope="col">Date of Action</th>
+				</tr><tr style="color:#333333;background-color:White;">
+					<td>
+                                                                    1
+                                                                    
+                                                                </td><td>
+                                                                    
+                                                                    <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_1_lblppprootaccntidmany_0" class="wordbreak" style="word-wrap: normal; word-break: break-all;">1108874121</span>
+                                                                    <hr>
+                                                                    <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_1_lblpproottransidmany_0" class="wordbreak" style="word-wrap: normal; word-break: break-all;">415514358200</span>
+
+                                                                </td><td>
+                                                                    <span>Airtel Payments Bank</span>
+                                                                    <div style="display:none"></div>
+
+                                                                    <div style="display:none">
+                                                                        <hr>
+                                                                        Merchant : 
+                                                                    </div>
+                                                                    <div style="display:none">
+                                                                        <hr>
+                                                                        Wallet /PG/PA : 
+                                                                    </div>
+                                                                    <div style="display:none">
+                                                                        <hr>
+                                                                        
+                                                                    </div>
+                                                                    
+                                                                    <hr>
+                                                                    <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_1_lblplayers_0" style="color:Maroon;font-size:12px;font-weight:bold;">Layer : 2</span>
+                                                                </td><td>
+                                                                    <div style="display:none">
+                                                                        04/06/2024 10:51:48 AM
+                                                                    </div>
+                                                                    <div style="display:none">
+                                                                        04/06/2024 10:51:48 AM
+                                                                    </div>
+                                                                </td><td>
+                                                                    <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_1_lbloamnt_0"> 0.00</span>
+                                                                </td><td>
+                                                                    <p style="display:none,word-wrap: normal; word-break: break-all">
+                                                                        
+                                                                    </p>
+                                                                    <p style=",word-wrap: normal; word-break: break-all">
+                                                                        <br>
+                                                                        transaction details not found
+                                                                    </p>
+                                                                    <a id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_1_lnkConteavailadd_0" class="link" href="javascript:__doPostBack(&#39;ctl00$ContentPlaceHolder1$dtlistbankaction$ctl01$gedotherbank$ctl02$lnkConteavailadd&#39;,&#39;&#39;)"></a>
+                                                                    
+                                                                </td><td>
+                                                                    <p>
+                                                                        <i class="fa fa-bank"></i>
+                                                                        <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_1_lblbankname_0">Airtel Payments Bank</span>
+                                                                    </p>
+                                                                </td><td>
+                                                                    <span id="ContentPlaceHolder1_dtlistbankaction_gedotherbank_1_lblodate_0">04/06/2024 10:51:AM</span>
+                                                                </td>
+				</tr>
+			</tbody></table>
+		</div>
+
+
+                                                </td>
+	</tr>
+</tbody></table>
+
+
+
+                                            <p>
+                                                </p><h3 style="border: 1px dotted; display: inline; padding: 5px; background: #8080802b;">Action Taken</h3>
+
+                                            <p></p>
+                                            <div id="ContentPlaceHolder1_tab" style="width: 99%">
+
+                                                <table border="1" style="width: 100%;">
+
+                                                    <tbody><tr id="ContentPlaceHolder1_tracceptedby" style="width: 100%">
+	<th class="th">
+                                                            <label style="font-size: 13px;">Complaint Accepted By</label></th>
+	<td class="td">
+                                                            <span id="ContentPlaceHolder1_lblcomaccepby" style="font-size:13px;">Login Id: NODAL-TS-CIC14 
+ Name: SP, TGCSB(STATE )</span>
+                                                        </td>
+</tr>
+
+
+                                                    <tr id="ContentPlaceHolder1_tr47">
+	<th class="th">
+                                                            <label style="font-size: 13px;">Complaint Accepted Date</label></th>
+	<td class="td">
+                                                            <span id="ContentPlaceHolder1_lblcomaccdate" style="font-size:13px;">04/06/2024 12:33:30 PM</span>
+                                                        </td>
+</tr>
+
+                                                </tbody></table>
+                                                <table border="1" style="width: 100%;">
+                                                    <tbody><tr style="width: 100%; display: none">
+                                                        <th class="th" style="background: #f0ad4e; color: white;">
+                                                            <label style="font-size: 13px;">Acknowledgement No.</label></th>
+                                                        <td class="td" style="background: #f0ad4e; color: white;">
+                                                            <span id="ContentPlaceHolder1_lblcompl">23706240025664</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="th">
+                                                            <label>Current Status</label></th>
+                                                        <td class="td">
+                                                            <span id="ContentPlaceHolder1_lblcurrentstatus">Under Process</span>
+                                                        </td>
+                                                    </tr>
+                                                </tbody></table>
+                                                <hr>
+                                                
+                                                
+                                                <table border="1" style="width: 100%; background: #6eb6d552;">
+                                                    
+                                                    
+                                                    
+                                                    
+
+                                                </table>
+
+                                                
+
+
+
+                                                <table border="1" style="width: 100%; background: #6eb6d552;">
+                                                    
+                                                    
+                                                    
+                                                </table>
+
+                                                <table border="1" style="width: 100%">
+                                                    
+                                                    
+                                                    
+                                                </table>
+
+                                                <table border="1" style="width: 100%; background: #6eb6d552;">
+                                                    
+                                                    
+
+
+                                                    
+                                                    
+
+                                                </table>
+
+                                                <table border="1" style="width: 100%">
+                                                    
+
+                                                    
+
+                                                    
+
+                                                </table>
+
+                                                <table border="1" style="width: 100%; background: #00bcd49c;">
+
+                                                    
+
+                                                    
+                                                </table>
+                                                <table border="1" style="width: 100%; background: #f0ad4eba; color: #272626;">
+
+                                                    <tbody><tr id="ContentPlaceHolder1_update" style="width: 100%">
+	<th class="th">
+                                                            <label style="font-size: 13px;">Under Process </label>
+                                                        </th>
+	<td class="td">
+                                                            <span id="ContentPlaceHolder1_lblupdate" style="font-size:13px;">04/06/2024 12:33:30 PM</span>
+                                                        </td>
+</tr>
+
+                                                    
+                                                    
+                                                </tbody></table>
+                                                <table border="1" style="width: 100%">
+
+                                                    
+
+                                                    
+                                                    
+
+                                                </table>
+                                                <hr>
+                                            </div>
+                                            
+                                            
+                                            <div class="alert-info">
+                                                <h5 style="text-align: center;">
+                                                    <span id="ContentPlaceHolder1_lblMSG"></span></h5>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    
+                                    <input type="submit" name="ctl00$ContentPlaceHolder1$btnPrint" value="Print" onclick="printDiv(&#39;Divprint&#39;);" id="ContentPlaceHolder1_btnPrint" class="btn btn-default">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+        </div>
+        <section class="footer_bottom">
+            <div class="container">
+                <div class="row" style="margin: 0px -104px 0px 145px;">
+                    <div class="col-md-12">
+                        <p class="copyright" style="text-align: center; margin: 0px auto;">
+                            Website Content Managed by Ministry of Home Affairs, Govt. of India.  Best viewed in Mozilla Firefox, Google Chrome.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </form>
+    <script src="./Cyber Police Portal_23706240025664_files/jquery.min.js.download"></script>
+        <script src="./Cyber Police Portal_23706240025664_files/bootstrap.min.js.download"></script>
+
+    <!-- Custom Theme JavaScript -->
+    
+        
+    
+
+    
+
+
+
+</body></html>
