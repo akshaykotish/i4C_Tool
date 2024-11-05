@@ -15,7 +15,7 @@ icons = {
 };
 
 var boxwidth = 300;
-var boxheight = 200;
+var boxheight = 50;
 
 level = 0;
 
