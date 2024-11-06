@@ -17,69 +17,6 @@ container.style.width = '100%';
 container.style.height = '100%';
 document.body.appendChild(container);
 
-// Add zoom in, zoom out, and drag move buttons
-const controlsContainer = document.createElement('div');
-controlsContainer.style.position = 'fixed';
-controlsContainer.style.bottom = '20px';
-controlsContainer.style.right = '20px';
-controlsContainer.style.display = 'flex';
-controlsContainer.style.flexDirection = 'column';
-controlsContainer.style.gap = '10px';
-controlsContainer.style.zIndex = '1000';
-document.body.appendChild(controlsContainer);
-
-// Zoom In button
-const zoomInButton = document.createElement('button');
-zoomInButton.innerText = '+';
-zoomInButton.style.width = '50px';
-zoomInButton.style.height = '50px';
-zoomInButton.style.fontSize = '24px';
-zoomInButton.style.cursor = 'pointer';
-zoomInButton.style.border = 'none';
-zoomInButton.style.color = 'black';
-controlsContainer.appendChild(zoomInButton);
-zoomInButton.addEventListener('click', function () {
-    zoom(1, { clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 });
-});
-
-// Zoom Out button
-const zoomOutButton = document.createElement('button');
-zoomOutButton.innerText = '-';
-zoomOutButton.style.width = '50px';
-zoomOutButton.style.height = '50px';
-zoomOutButton.style.fontSize = '24px';
-zoomOutButton.style.cursor = 'pointer';
-zoomOutButton.style.border = 'none';
-zoomOutButton.style.color = 'black';
-controlsContainer.appendChild(zoomOutButton);
-zoomOutButton.addEventListener('click', function () {
-    zoom(-1, { clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 });
-});
-
-// Drag Move button
-const dragMoveButton = document.createElement('button');
-dragMoveButton.innerText = 'Move';
-dragMoveButton.style.width = '50px';
-dragMoveButton.style.height = '50px';
-dragMoveButton.style.fontSize = '18px';
-dragMoveButton.style.cursor = 'pointer';
-dragMoveButton.style.border = 'none';
-dragMoveButton.style.color = 'black';
-controlsContainer.appendChild(dragMoveButton);
-
-dragMoveButton.addEventListener('mousedown', function (e) {
-    isPanning = true;
-    startX = e.clientX - panX;
-    startY = e.clientY - panY;
-    document.body.style.cursor = 'grab';
-});
-
-document.addEventListener('mouseup', function () {
-    isPanning = false;
-    document.body.style.cursor = 'default';
-});
-
-
 // Function to apply transformations for zoom and pan
 function applyTransformations() {
     container.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
@@ -193,18 +130,12 @@ function createBox(boxData) {
     
     // Apply styles
     box.style.backgroundColor = color;
-    box.style.top = `${top}px`;  
-    box.style.left = `${left}px`; 
-    box.style.position = 'absolute';  
+    box.style.top = `${top}px`;
+    box.style.left = `${left}px`;
+    box.style.position = 'absolute';
     box.style.width = `${width}px`;
     box.style.height = `${height}px`;
     box.style.cursor = 'grab';
-    
-
-    console.log("id", id);
-    // Add the information as a data attribute
-    box.setAttribute('id', id);
-    console.log(box.id);
 
     // Add the information as a data attribute
     box.setAttribute('data-info', JSON.stringify(info));
@@ -219,84 +150,49 @@ function createBox(boxData) {
 
     identificationRow.appendChild(iconElement);
 
-
     const boxinfo = document.createElement('div');
     boxinfo.classList.add("boxinfo");
-
     boxinfo.innerHTML = `
         <span class='type'>${type}</span>
         <div class='dividerline'></div>
-        <span class='id'>ID: ${id}</span>
-        <span class='name'>${name}</span>
+        <span class='id'>Account: ${id}</span>
     `;
 
     identificationRow.appendChild(boxinfo);
 
-    
-    const informationRow = document.createElement('div');
-    informationRow.classList.add("informationRow");
 
-    informationRow.innerHTML =
-     `
-     <span class='information'>Required Information</span>
+    console.log(info);
+    
+    const amountinfo = document.createElement('div');
+    amountinfo.classList.add("amountinfo");
+    amountinfo.innerHTML = `
+        <span class='id'>${formatIndianCurrency(info["transaction_amount"])}</span>
     `;
 
-     // Create a container for the info key-value pairs
-     const infoContainer = document.createElement('div');
-     infoContainer.classList.add('info-container');
+    identificationRow.appendChild(amountinfo);
 
-    // Iterate over the info object and create a paragraph for each key-value pair
-    for (const [key, value] of Object.entries(info)) {
-        const infoLabel = document.createElement('p');
-        infoLabel.innerHTML = `<b>${key.replaceAll("_", " ").toUpperCase()}:</b> ${value}`;
-        infoLabel.classList.add('box-info');
-        infoContainer.appendChild(infoLabel);
-    }
+    
 
-    informationRow.appendChild(infoContainer);
-    
-    // Create a div for buttons
-    const buttonContainer = document.createElement('div');
-    buttonContainer.classList.add('button-container');
-    
-    // Create three buttons
+    // Create button for showing additional information
     const btn1 = document.createElement('div');
+    btn1.classList.add("nextbtn");
     btn1.style.backgroundImage = "url('assets/next.png')";
-    console.log("HN", box);
-    btn1.addEventListener('click', function(){
-        console.log("YO", box);
+    btn1.addEventListener('click', function() {
         ShowSubTransactions(box);
     });
-    btn1.innerText = 'Next';
+    btn1.innerText = '➤';
     
-    const btn2 = document.createElement('div');
-    btn2.style.backgroundImage = "url('assets/link.png')";
-    btn2.innerText = 'Find Links';
-    
-    const btn3 = document.createElement('div');
-    btn3.style.backgroundImage = "url('assets/pencil.png')";
-    btn3.innerText = 'Write Note';
-
-    
-    const btn4 = document.createElement('div');
-    btn4.style.backgroundImage = "url('assets/delete.png')";
-    btn4.innerText = 'Delete';
-    
-    // Append buttons to the button container
-    //buttonContainer.appendChild(btn1);
-    // buttonContainer.appendChild(btn2);
-    // buttonContainer.appendChild(btn3);
-    // buttonContainer.appendChild(btn4);
-
     identificationRow.appendChild(btn1);
-    
+
+    // Event listener for showing the info panel
+    box.addEventListener('click', function() {
+        showInfoPanel(id, name, info);
+    });
+
     // Append all elements to the box
     box.appendChild(identificationRow);
-    //box.appendChild(informationRow);
-    //box.appendChild(buttonContainer);
     
     // Append the box to the container
-    console.log("Ready to save", box);
     container.appendChild(box);  
     
     // Store the box in the map with its id
@@ -523,3 +419,12 @@ function DoConnection(boxa, boxb){
 enablePanning();
 
 
+
+
+
+function formatIndianCurrency(amount) {
+    if (typeof amount === 'undefined') {
+        return '';
+    }
+    return '₹' + amount.toLocaleString('en-IN');
+}

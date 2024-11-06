@@ -14,7 +14,7 @@ icons = {
     "note": "assets/pencil.png"
 };
 
-var boxwidth = 300;
+var boxwidth = 350;
 var boxheight = 50;
 
 level = 0;
@@ -24,14 +24,14 @@ var vcardindex = -1;
 function BuildVictimsBox(victim, index) {
 
     if (boxMap[victim.bank_account.account_number]) {
-        console.log("Box for this victim already exists:", victim.bank_account.account_number);
+        //console.log("Box for this victim already exists:", victim.bank_account.account_number);
         return; // Skip creating a new box
     }
     else{
         vcardindex++;
     }
 
-    console.log(victim);
+    //console.log(victim);
     const spacing = 500; // Spacing between victim boxes
     const victimbox = createBox({
         id: victim.bank_account.account_number,
@@ -66,19 +66,19 @@ function BuildVictimsBox(victim, index) {
 }
 
 function BuildAllVictims(victims) {
-    console.log(victims);
+    //console.log(victims);
     victims.forEach((victim, index) => {
         BuildVictimsBox(victim, index);
     });
 }
 
 function ShowSubTransactions(box) {
-    console.log(box.id);
+    //console.log(box.id);
     level++;
     if (boxHierarchy.has(box)) {
-        console.log(boxHierarchy);
+        //console.log(boxHierarchy);
         const subBoxes = boxHierarchy.get(box);
-        console.log(subBoxes);
+        //console.log(subBoxes);
         if (subBoxes && subBoxes.length > 0 && subBoxes[0].element.style.display === 'none') {
             showSubBoxes(box);
         } else {
@@ -96,26 +96,37 @@ function ShowSubTransactions(box) {
 
     var i = 0;
     var count = 0;
-    transactions.map((tx) => {
+
+    const marginBetweenBoxes = 200/scale; // Margin between each sub-box
+    const boxWidth = 250/scale; // Width of each sub-box
+
+    // Determine the number of children to calculate proper positioning
+    let subBoxesData = transactions.filter(tx => tx.from_account_number === box.id);
+
+    // Calculate the total width required for all sub-boxes with margins
+    const totalWidth = subBoxesData.length * (boxWidth + marginBetweenBoxes) - marginBetweenBoxes;
+
+    // Calculate the starting position for the first box, centered with respect to the parent box
+    const startLeft = boxRect.left - (totalWidth / 2); // Center all sub-boxes around the parent box
+
+    let nextTopReduction = marginBetweenBoxes; // Initial margin for top, reduced by half for each subsequent box
+
+    subBoxesData.map((tx, index) => {
         let from_account_number = tx.from_account_number;
-        console.log(box.id);
+
         if (from_account_number == box.id) {
-            i = i + 1;
             let to_account_number = tx.to_bank_details.account_number;
-            console.log("tx", tx.to_bank_details.account_number);
 
-            var newBox;
-            console.log(boxMap[to_account_number]);
-            console.log(tx.to_name);
+            let newBox;
             if (boxMap[to_account_number] === undefined) {
+                // Positioning the sub-boxes
+                const newBoxTop = (boxRect.top + boxRect.height + (nextTopReduction/2) - panY) / scale;
 
-                console.log("CS", to_account_number);
-
-                const newBoxTop = (boxRect.top + boxRect.height + (boxheight) - (panY)) / scale;
-                const newBoxLeft = (((boxRect.left * scale) + (boxwidth/6)) * i - (panX)) / scale; // Alternate left-right positioning
+                // Calculate the left position for each sub-box
+                const newBoxLeft = (startLeft + index * (boxWidth + marginBetweenBoxes) - panX) / scale;
 
                 newBox = createBox({
-                    id: to_account_number, // Unique ID for each new box
+                    id: to_account_number,
                     name: "Suspect Account",
                     color: colors[level],
                     type: "Transaction",
@@ -125,35 +136,25 @@ function ShowSubTransactions(box) {
                     height: boxheight,
                     icon: tx.transaction_status.includes("withdraw") ? icons["withdrawn"] :
                         tx.transaction_status.includes("lean") ? icons["lean"] :
-                            tx.transaction_status.includes("hold") ? icons["hold"] :
-                                tx.transaction_status.includes("shopping") ? icons["onlineshopping"] :
-                                    tx.transaction_status.includes("credit") ? icons["credit"] : icons["debit"],
+                        tx.transaction_status.includes("hold") ? icons["hold"] :
+                        tx.transaction_status.includes("shopping") ? icons["onlineshopping"] :
+                        tx.transaction_status.includes("credit") ? icons["credit"] : icons["debit"],
                     info: {
                         "from_account_number": tx.from_account_number,
-                        //"from_bank_name": tx.from_bank_name,
-                        // "from_name": tx.from_name,
                         "utr_id": tx.utr_id,
-                        // "transaction_id": tx.transaction_id,
                         "to_account_number": tx.to_account_number,
-                        // "to_name": tx.to_name,
                         "to_bank_name": tx.to_bank_name,
-                        // "account_number": tx.to_bank_details.account_number,
                         "ifsc": tx.to_bank_details.ifsc,
-                        // "city": tx.to_bank_details.city,
                         "transaction_amount": tx.transaction_amount,
-                        // "transaction_status": tx.transaction_status
                     }
                 });
                 count++;
-            }
-            else {
+            } else {
                 newBox = boxMap[to_account_number];
                 if (newBox != undefined) {
-                    console.log("Count", newBox);
                     count++;
                 }
             }
-
 
             const parentConnection = connections.find(connection => connection.box1 === box || connection.box2 === box);
             const parentColor = parentConnection ? parentConnection.color : 'black';
@@ -161,27 +162,18 @@ function ShowSubTransactions(box) {
 
             connections.push(connection);
 
-            // Make the new box draggable
             makeDraggable(newBox, connections.filter(c => c.box1 === newBox || c.box2 === newBox));
-
-            // Make the new box draggable
             makeDraggable(box, connections.filter(c => c.box1 === box || c.box2 === box));
 
-
-            // Add event listener to the new box
-            // ShowSubTransactions(newBox);
-
-            // Enable line color change for each connection
             enableLineColorChange(connection.path);
 
             subBoxes.push({ element: newBox, connection });
+
+            // Reduce the nextTopReduction by half for the next sub-box
         }
-
-
     });
 
-
-    console.log(count);
+    //console.log(count);
     if (count == 0) {
         alert("No more transactions!");
     }
@@ -201,7 +193,7 @@ function LoadCase(casename) {
 function LoadGraphs() {
     let case1 = LoadCase("Case1");
     if (case1 != null) {
-        console.log(case1);
+        //console.log(case1);
         transactions = case1.transaction_details;
         BuildAllVictims(case1.victim);
     }
