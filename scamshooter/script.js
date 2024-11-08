@@ -188,7 +188,7 @@ function createBox(boxData) {
     identificationRow.appendChild(btn1);
 
     // Event listener for showing the info panel
-    box.addEventListener('click', function() {
+    boxinfo.addEventListener('click', function() {
         showInfoPanel(id, name, info);
     });
 
