@@ -136,6 +136,9 @@ function createBox(boxData) {
     box.style.width = `${width}px`;
     box.style.height = `${height}px`;
     box.style.cursor = 'grab';
+    //box.style.backgroundColor = color || '#f0f4f8'; // Default background color
+    //box.style.color = forecolor || '#333'; // Default text color
+
 
     // Add the information as a data attribute
     box.setAttribute('data-info', JSON.stringify(info));
