@@ -101,7 +101,7 @@ function createOrUpdateCurvedLink(box1, box2, path) {
 }
 
 // Function to create a line between two boxes
-function createConnection(box1, box2, color = 'black') {
+function createConnection(box1, box2, color = 'black', transactions = []) {
     const svg = document.getElementById('lineContainer');
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
     path.setAttribute("stroke", color);
@@ -112,10 +112,73 @@ function createConnection(box1, box2, color = 'black') {
     // Initial line between the two boxes
     createOrUpdateCurvedLink(box1, box2, path);
 
+     // Enable line color change
+     enableLineColorChange(path);
+
+     // Add hover event listener
+     enableTransactionHover(path, transactions);
+
     // Return an object that contains the boxes, the path, and its color
     return { box1, box2, path, color };
 }
 
+// Function to enable hover tooltip on connections
+function enableTransactionHover(path, transactions) {
+    let tooltip;
+
+    path.addEventListener('mouseenter', function (e) {
+        if (transactions.length === 0) return;
+
+        // Create tooltip
+        tooltip = document.createElement('div');
+        tooltip.classList.add('tooltip');
+
+        // Build content
+        let content = '<ul>';
+        transactions.forEach(tx => {
+            content += `<li>Transaction ID: ${tx.utr_id}, Amount: ${formatIndianCurrency(tx.transaction_amount)}</li>`;
+        });
+        content += '</ul>';
+
+        tooltip.innerHTML = content;
+        document.body.appendChild(tooltip);
+
+        // Position the tooltip
+        tooltip.style.position = 'absolute';
+        tooltip.style.left = `${e.clientX + 10}px`;
+        tooltip.style.top = `${e.clientY + 10}px`;
+    });
+
+    path.addEventListener('mousemove', function (e) {
+        if (tooltip) {
+            tooltip.style.left = `${e.clientX + 10}px`;
+            tooltip.style.top = `${e.clientY + 10}px`;
+        }
+    });
+
+    path.addEventListener('mouseleave', function () {
+        if (tooltip) {
+            document.body.removeChild(tooltip);
+            tooltip = null;
+        }
+    });
+}
+
+// Add CSS for the tooltip
+const style = document.createElement('style');
+style.innerHTML = `
+.tooltip {
+    background-color: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    padding: 8px;
+    border-radius: 4px;
+    max-width: 300px;
+    font-size: 12px;
+    position: absolute;
+    z-index: 1000;
+}
+`;
+document.head.appendChild(style);
 
 function createBox(boxData) {
     const { id, name, color, forecolor, type, top, left, width, height, info, icon } = boxData;
@@ -156,7 +219,7 @@ function createBox(boxData) {
     const boxinfo = document.createElement('div');
     boxinfo.classList.add("boxinfo");
     boxinfo.innerHTML = `
-        <span class='type'>${type}</span>
+        <span class='type'>${type} (Level ${boxData.level || 0})</span>
         <div class='dividerline'></div>
         <span class='id'>Account: ${id}</span>
     `;
@@ -164,12 +227,16 @@ function createBox(boxData) {
     identificationRow.appendChild(boxinfo);
 
 
-    console.log(info);
+    // Calculate the total amount of transactions to this box id
+    const totalAmount = transactions
+        .filter(tx => tx.to_bank_details.account_number === id)
+        .reduce((sum, tx) => sum + Number(tx.transaction_amount.replace(",", "")), 0);
+
     
     const amountinfo = document.createElement('div');
     amountinfo.classList.add("amountinfo");
     amountinfo.innerHTML = `
-        <span class='id'>${formatIndianCurrency(info["transaction_amount"])}</span>
+        <span class='id'>${formatIndianCurrency(totalAmount)}</span>
     `;
 
     identificationRow.appendChild(amountinfo);
@@ -427,6 +494,10 @@ enablePanning();
 
 function formatIndianCurrency(amount) {
     if (typeof amount === 'undefined') {
+        return '';
+    }
+    else if(amount === 0)
+    {
         return '';
     }
     return '₹' + amount.toLocaleString('en-IN');

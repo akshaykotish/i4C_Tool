@@ -1,5 +1,9 @@
 var transactions = [];
 
+
+// Declare the transactionLinksMap globally
+let transactionLinksMap = new Map();
+
 icons = {
     "debit": "assets/atm-card.png",
     "withdrawn": "assets/atm.png",
@@ -55,11 +59,16 @@ function BuildVictimsBox(victim, index) {
         icon: icons["men"],
     });
 
+    victimbox.level = 0;
+
     // Store the victim box in the boxMap to keep track of created boxes
     boxMap[victim.bank_account.account_number] = victimbox;
 
+    // Store the victim box in the boxMap to keep track of created boxes
+    boxMap.set(victim.bank_account.account_number, victimbox);
+
     // Make the new box draggable
-    makeDraggable(victimbox, connections.filter(c => c.box1 === newBox || c.box2 === newBox));
+    makeDraggable(victimbox, connections.filter(c => c.box1 === victimbox || c.box2 === victimbox));
 
     // Add event listener to the new box
     // ShowSubTransactions(victimbox);
@@ -75,22 +84,28 @@ function BuildAllVictims(victims) {
 function ShowSubTransactions(box) {
     //console.log(box.id);
     level++;
+
+    // Get the parent box's level
+    let parentLevel = box.level;
+
     if (boxHierarchy.has(box)) {
         //console.log(boxHierarchy);
         const subBoxes = boxHierarchy.get(box);
         //console.log(subBoxes);
-        if (subBoxes && subBoxes.length > 0 && subBoxes[0].element.style.display === 'none') {
-            showSubBoxes(box);
-        } else {
+        if (box.subBoxesVisible) {
             hideSubBoxes(box);
+            box.subBoxesVisible = false;
+        } else {
+            showSubBoxes(box);
+            box.subBoxesVisible = true;
         }
         return;
     }
 
     const boxRect = box.getBoundingClientRect();
-    const maxBoxes = 2; // Math.floor(Math.random() * 2); // Random number between 0 and 10
+    //const maxBoxes = 2; // Math.floor(Math.random() * 2); // Random number between 0 and 10
     const colors = ['#E3F2FD', '#FFF9C4', '#FFEBEE', '#E8F5E9', '#F3E5F5', '#FFE0B2', '#F1F8E9', '#FCE4EC', '#E1F5FE', '#FFF3E0'];
-    const padding = 50; // Padding between boxes
+    //const padding = 50; // Padding between boxes
 
     const subBoxes = [];
 
@@ -118,17 +133,21 @@ function ShowSubTransactions(box) {
             let to_account_number = tx.to_bank_details.account_number;
 
             let newBox;
-            if (boxMap[to_account_number] === undefined) {
+            if (!boxMap.has(to_account_number)) {
                 // Positioning the sub-boxes
                 const newBoxTop = (boxRect.top + boxRect.height + (nextTopReduction/2) - panY) / scale;
 
                 // Calculate the left position for each sub-box
                 const newBoxLeft = (startLeft + index * (boxWidth + marginBetweenBoxes) - panX) / scale;
 
+
+                const colorIndex = (box.level + 1) % colors.length;
+                const color = colors[colorIndex];
+
                 newBox = createBox({
                     id: to_account_number,
                     name: "Suspect Account",
-                    color: colors[level],
+                    color: color,
                     type: "Transaction",
                     top: newBoxTop,
                     left: newBoxLeft,
@@ -146,11 +165,16 @@ function ShowSubTransactions(box) {
                         "to_bank_name": tx.to_bank_name,
                         "ifsc": tx.to_bank_details.ifsc,
                         "transaction_amount": tx.transaction_amount,
-                    }
+                    },
+                    level: parentLevel + 1,
                 });
+
+                newBox.level = parentLevel + 1;
                 count++;
+                // Store the new box in boxMap
+                boxMap.set(to_account_number, newBox);
             } else {
-                newBox = boxMap[to_account_number];
+                newBox = boxMap.get(to_account_number);
                 if (newBox != undefined) {
                     count++;
                 }
@@ -158,8 +182,13 @@ function ShowSubTransactions(box) {
 
             const parentConnection = connections.find(connection => connection.box1 === box || connection.box2 === box);
             const parentColor = parentConnection ? parentConnection.color : 'black';
-            const connection = createConnection(box, newBox, parentColor);
 
+            
+            // Get transactions between accounts
+            const key = box.id + '-' + to_account_number;
+            const transactionsBetweenAccounts = transactionLinksMap.get(key) || [];
+
+            const connection = createConnection(box, newBox, parentColor, transactionsBetweenAccounts);
             connections.push(connection);
 
             makeDraggable(newBox, connections.filter(c => c.box1 === newBox || c.box2 === newBox));
@@ -173,8 +202,14 @@ function ShowSubTransactions(box) {
         }
     });
 
-    //console.log(count);
-    if (count == 0) {
+    box.subBoxesVisible = true;
+
+    // //console.log(count);
+    // if (count == 0) {
+    //     alert("No more transactions!");
+    // }
+
+    if (subBoxes.length === 0) {
         alert("No more transactions!");
     }
 
@@ -193,10 +228,60 @@ function LoadCase(casename) {
 function LoadGraphs() {
     let case1 = LoadCase("Case1");
     if (case1 != null) {
-        //console.log(case1);
         transactions = case1.transaction_details;
+        
+        // Preprocess transactions to group them by account pairs
+        transactionLinksMap = groupTransactionsByAccounts(transactions);
+        
         BuildAllVictims(case1.victim);
     }
 }
 
+
+// Function to group transactions by account pairs
+function groupTransactionsByAccounts(transactions) {
+    const map = new Map();
+
+    transactions.forEach(tx => {
+        const from_account_number = tx.from_account_number;
+        const to_account_number = tx.to_bank_details.account_number;
+
+        const key = from_account_number + '-' + to_account_number;
+
+        if (map.has(key)) {
+            map.get(key).push(tx);
+        } else {
+            map.set(key, [tx]);
+        }
+    });
+
+    return map;
+}
+
+function hideSubBoxes(box) {
+    const subBoxes = boxHierarchy.get(box);
+    if (subBoxes) {
+        subBoxes.forEach(subBox => {
+            subBox.element.style.display = 'none';
+            subBox.connection.path.style.display = 'none';
+            subBox.element.subBoxesVisible = false; // Update visibility
+            hideSubBoxes(subBox.element); // Recursive call to hide sub-boxes
+        });
+    }
+}
+
+function showSubBoxes(box) {
+    const subBoxes = boxHierarchy.get(box);
+    if (subBoxes) {
+        subBoxes.forEach(subBox => {
+            subBox.element.style.display = 'block';
+            subBox.connection.path.style.display = 'block';
+            subBox.element.subBoxesVisible = true; // Update visibility
+            showSubBoxes(subBox.element); // Recursive call to show sub-boxes
+        });
+    }
+}
+
 LoadGraphs();
+
+
