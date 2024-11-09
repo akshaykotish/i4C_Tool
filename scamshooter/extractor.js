@@ -28,6 +28,29 @@ function extractTableToJson() {
         }
       },
       {
+        id: "ContentPlaceHolder1_dtlistbankaction_gedotherbank_3",
+        key: "transaction_details",
+        extractRowData: (cells) => {
+          return {
+            "S_No": cells[0].innerText.trim(),
+            "from_account_number": cells[1].innerText.split('\n')[0].trim(),
+            "transaction_id": cells[1].innerText.split('\n')[1].trim(),
+            "to_bank_name": cells[2].innerText.trim(),
+            "Withdrawal_Date_Time": cells[3].innerText.trim(),
+            "transaction_amount": cells[4].innerText.trim(),
+            "Reference_No_Remarks": cells[5].innerText.trim(),
+            "ATM_Details": cells[6].innerText.trim(),
+            "Action_Taken_By": cells[7].innerText.trim(),
+            "Date_of_Action": cells[8].innerText.trim(),
+            "to_bank_details": {
+                "name": cells[2].innerText.trim(),
+                "ATM_ID": cells[6].innerText.split('ATM ID :-')[1]?.split('<br>')[0]?.trim() || "",
+                "place": cells[6].innerText.split('Place of ATM :-')[1]?.split('<br>')[0]?.trim() || "",
+            }
+          };
+        }
+      },
+      {
         id: "ContentPlaceHolder1_gv_ActiontakenStatus",
         key: "victim",
         extractRowData: (cells) => {

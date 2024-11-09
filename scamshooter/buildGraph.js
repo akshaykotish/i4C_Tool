@@ -88,6 +88,14 @@ function ShowSubTransactions(box) {
     // Get the parent box's level
     let parentLevel = box.level;
 
+    // Hide sub-boxes of all other boxes at the same level
+    boxMap.forEach(function(otherBox){
+        if(otherBox.level == box.level && otherBox != box){
+            hideSubBoxes(otherBox);
+            otherBox.subBoxesVisible = false;
+        }
+    });
+
     if (boxHierarchy.has(box)) {
         //console.log(boxHierarchy);
         const subBoxes = boxHierarchy.get(box);
@@ -118,6 +126,12 @@ function ShowSubTransactions(box) {
     // Determine the number of children to calculate proper positioning
     let subBoxesData = transactions.filter(tx => tx.from_account_number === box.id);
 
+    // If no transactions, alert the user
+    if (subBoxesData.length === 0) {
+        alert("No more transactions!");
+        return;
+    }
+
     // Calculate the total width required for all sub-boxes with margins
     const totalWidth = subBoxesData.length * (boxWidth + marginBetweenBoxes) - marginBetweenBoxes;
 
@@ -131,6 +145,14 @@ function ShowSubTransactions(box) {
 
         if (from_account_number == box.id) {
             let to_account_number = tx.to_bank_details.account_number;
+
+            if(to_account_number === undefined)
+            {
+                let Withdrawal_Date_Time = tx.Withdrawal_Date_Time;
+                to_account_number = "WithDrawn on " + Withdrawal_Date_Time;
+                tx["transaction_status"] = "withdrawn";
+                alert("withdrawn");
+            }
 
             let newBox;
             if (!boxMap.has(to_account_number)) {
