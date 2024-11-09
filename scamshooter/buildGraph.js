@@ -152,7 +152,7 @@ function ShowSubTransactions(box) {
                 let Withdrawal_Date_Time = tx.Withdrawal_Date_Time;
                 to_account_number = " - WithDrawn on " + Withdrawal_Date_Time;
                 tx["transaction_status"] = "withdrawn";
-                alert("withdrawn");
+                //alert("withdrawn");
             }
 
             let newBox;
