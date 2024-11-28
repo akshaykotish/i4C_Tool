@@ -1,5 +1,7 @@
 var transactions = [];
 
+var shownboxes = [];
+
 
 // Declare the transactionLinksMap globally
 let transactionLinksMap = new Map();
@@ -19,7 +21,7 @@ icons = {
 };
 
 var boxwidth = 350;
-var boxheight = 80;
+var boxheight = 100;
 
 level = 0;
 
@@ -36,7 +38,7 @@ function BuildVictimsBox(victim, index) {
     }
 
     //console.log(victim);
-    const spacing = 500; // Spacing between victim boxes
+    const spacing = 400; // Spacing between victim boxes
     const victimbox = createBox({
         id: victim.bank_account.account_number,
         name: victim.name,
@@ -59,6 +61,8 @@ function BuildVictimsBox(victim, index) {
         icon: icons["men"],
     });
 
+    shownboxes.push(victimbox);
+
     victimbox.level = 0;
 
     // Store the victim box in the boxMap to keep track of created boxes
@@ -69,6 +73,7 @@ function BuildVictimsBox(victim, index) {
 
     // Make the new box draggable
     makeDraggable(victimbox, connections.filter(c => c.box1 === victimbox || c.box2 === victimbox));
+
 
     // Add event listener to the new box
     // ShowSubTransactions(victimbox);
@@ -121,7 +126,7 @@ function ShowSubTransactions(box) {
     var count = 0;
 
     const marginBetweenBoxes = 200/scale; // Margin between each sub-box
-    const boxWidth = 250/scale; // Width of each sub-box
+    const boxWidth = 280/scale; // Width of each sub-box
 
     // Determine the number of children to calculate proper positioning
     let subBoxesData = transactions.filter(tx => tx.from_account_number === box.id);
@@ -215,11 +220,11 @@ function ShowSubTransactions(box) {
             connections.push(connection);
 
             makeDraggable(newBox, connections.filter(c => c.box1 === newBox || c.box2 === newBox));
-            makeDraggable(box, connections.filter(c => c.box1 === box || c.box2 === box));
 
             enableLineColorChange(connection.path);
 
             subBoxes.push({ element: newBox, connection });
+
 
             // Reduce the nextTopReduction by half for the next sub-box
         }
@@ -281,15 +286,28 @@ function groupTransactionsByAccounts(transactions) {
     return map;
 }
 
+var showboxeslist = [];
+var hideboxeslist = [];
+
 function hideSubBoxes(box) {
     const subBoxes = boxHierarchy.get(box);
     if (subBoxes) {
         subBoxes.forEach(subBox => {
             subBox.element.style.display = 'none';
             subBox.connection.path.style.display = 'none';
-            subBox.element.subBoxesVisible = false; // Update visibility
-            hideSubBoxes(subBox.element); // Recursive call to hide sub-boxes
+            subBox.element.subBoxesVisible = false; // Update 
+            
+            if(!hideboxeslist.includes(subBox.element)){
+                hideboxeslist.push(subBox.element);
+                console.log(" is added in hideboxeslist");
+                hideSubBoxes(subBox.element); // Recursive call to hide sub-boxes
+            }
+            
         });
+
+        box.style.display = 'block';
+        box.subBoxesVisible = true; // Update visibility
+        
     }
 }
 
@@ -300,7 +318,19 @@ function showSubBoxes(box) {
             subBox.element.style.display = 'block';
             subBox.connection.path.style.display = 'block';
             subBox.element.subBoxesVisible = true; // Update visibility
-            showSubBoxes(subBox.element); // Recursive call to show sub-boxes
+
+            let indexofbox = hideboxeslist.indexOf(subBox.element);
+            hideboxeslist.slice(indexofbox, 1);
+            
+            
+            connections.forEach(connection => {
+                createOrUpdateCurvedLink(connection.box1, connection.box2, connection.path);
+            });
+            
+            if(showboxeslist.includes(subBox.element)){
+                showboxeslist.push(subBox.element);
+                showSubBoxes(subBox.element); // Recursive call to show sub-boxes
+            }
         });
     }
 }

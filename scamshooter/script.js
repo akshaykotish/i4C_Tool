@@ -221,7 +221,7 @@ function createBox(boxData) {
     boxinfo.innerHTML = `
         <span class='type'>${type} (Level ${boxData.level || 0})</span>
         <div class='dividerline'></div>
-        <span class='id'>Account: ${id}</span>
+        <span class='id'>${id}</span>
     `;
 
     identificationRow.appendChild(boxinfo);
@@ -230,8 +230,9 @@ function createBox(boxData) {
     // Calculate the total amount of transactions to this box id
     const totalAmount = transactions
         .filter(tx => tx.to_bank_details.account_number === id)
-        .reduce((sum, tx) => sum + Number(tx.transaction_amount.replace(",", "")), 0);
+        .reduce((sum, tx) => sum + Number(tx.transaction_amount.replaceAll(",", "").replace("₹", "")), 0);
 
+        
     
     const amountinfo = document.createElement('div');
     amountinfo.classList.add("amountinfo");
@@ -351,30 +352,46 @@ function makeDraggable(box, connections) {
     });
 }
 
-// Recursive hide/show functions for sub-boxes
-function hideSubBoxes(box) {
-    const subBoxes = boxHierarchy.get(box);
-    if (subBoxes) {
-        subBoxes.forEach(subBox => {
-            subBox.element.style.display = 'none';
-            subBox.connection1.path.style.display = 'none';
-            subBox.connection2.path.style.display = 'none';
-            hideSubBoxes(subBox.element); // Recursive call to hide sub-boxes
-        });
-    }
-}
+// // Recursive hide/show functions for sub-boxes
+// function hideSubBoxes(box) {
+//     // Ensure the box is in the boxMap
+//     if (!boxMap.has(box)) {
+//         console.warn(`Box not found in boxMap: ${box}`);
+//         return;
+//     }
 
-function showSubBoxes(box) {
-    const subBoxes = boxHierarchy.get(box);
-    if (subBoxes) {
-        subBoxes.forEach(subBox => {
-            subBox.element.style.display = 'block';
-            subBox.connection1.path.style.display = 'block';
-            subBox.connection2.path.style.display = 'block';
-            showSubBoxes(subBox.element); // Recursive call to show sub-boxes
-        });
-    }
-}
+//     const subBoxes = boxHierarchy.get(box);
+//     if (subBoxes) {
+//         subBoxes.forEach(subBox => {
+//             // Check if the sub-box is in boxMap before proceeding
+//             if (!boxMap.has(subBox.element)) {
+//                 console.warn(`Sub-box not found in boxMap: ${subBox.element}`);
+//                 return;
+//             }
+
+//             // Hide the sub-box and its connections
+//             subBox.element.style.display = 'none';
+//             if (subBox.connection1?.path) subBox.connection1.path.style.display = 'none';
+//             if (subBox.connection2?.path) subBox.connection2.path.style.display = 'none';
+
+//             // Recursive call to hide sub-boxes
+//             hideSubBoxes(subBox.element);
+//         });
+//     }
+// }
+
+
+// function showSubBoxes(box) {
+//     const subBoxes = boxHierarchy.get(box);
+//     if (subBoxes) {
+//         subBoxes.forEach(subBox => {
+//             subBox.element.style.display = 'block';
+//             subBox.connection1.path.style.display = 'block';
+//             subBox.connection2.path.style.display = 'block';
+//             showSubBoxes(subBox.element); // Recursive call to show sub-boxes
+//         });
+//     }
+// }
 
 // Function to add new boxes on double-click
 function addNewBoxesOnClick(box) {
