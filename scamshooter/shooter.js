@@ -1011,39 +1011,45 @@ function findParentBox(box) {
     }
     return null;
 }
-
-// Function to highlight boxes and connections in the path
 function highlightPath(path) {
     // First, reduce opacity of all elements
     fadeAllElements();
     
     // Highlight boxes and connections in the path
-    for (let i = 0; i < path.length; i++) {
+    for (let i = 0; i < path.length - 1; i++) {
         const currentBox = path[i];
+        const nextBox = path[i + 1];
         
         // Restore and highlight the current box
         restoreElementOpacity(currentBox);
         highlightBox(currentBox);
         
-        // Find and highlight connection to next box in path
-        if (i < path.length - 1) {
-            const nextBox = path[i + 1];
-            const connection = connections.find(conn => 
-                (conn.box1 === nextBox && conn.box2 === currentBox) ||
-                (conn.box2 === nextBox && conn.box1 === currentBox)
-            );
-            
-            if (connection) {
-                restoreElementOpacity(connection.path);
-                highlightConnection(connection);
-            }
+        // Find and highlight connection
+        const connection = connections.find(conn => 
+            (conn.box1 === currentBox && conn.box2 === nextBox) ||
+            (conn.box2 === currentBox && conn.box1 === nextBox)
+        );
+        
+        if (connection) {
+            restoreElementOpacity(connection.path);
+            highlightConnection(connection);
         }
     }
     
-    // Add emphasis to the root node
+    // Highlight the last box in the path if it exists
     if (path.length > 0) {
-        const rootBox = path[path.length - 1];
-        rootBox.style.boxShadow = `0 0 20px rgba(255, 0, 0, 0.5)`;
+        const lastBox = path[path.length - 1];
+        restoreElementOpacity(lastBox);
+        highlightBox(lastBox);
+        
+        // Show info panel for the clicked box
+        const clickedBox = path[0]; // The first box in the path is the clicked one
+        showInfoPanel(
+            clickedBox.id,
+            clickedBox.getAttribute('data-name'),
+            transactions,
+            path.reverse() // Reverse path to show root -> target direction
+        );
     }
 }
 
