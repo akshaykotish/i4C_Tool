@@ -64,6 +64,11 @@ const BatmanSearch = {
                 opacity: 0.7;
             }
 
+            .bat-search-icon svg{
+                width: 20px;
+                height: 20px;
+            }
+
             .bat-suggestions {
                 margin-top: 5px;
                 background: rgba(30, 30, 30, 0.95);
@@ -306,6 +311,7 @@ const BatmanSearch = {
         if (window.currentHighlightedPath) {
             window.currentHighlightedPath.boxes.forEach(box => {
                 box.classList.remove('bat-path-highlight');
+                box.classList.remove('bat-target-highlight');
             });
             
             connections.forEach(conn => {
@@ -550,6 +556,7 @@ BatmanSearch.clearHighlights = function() {
         window.currentHighlightedPath.boxes.forEach(box => {
             box.style.transition = 'all 0.3s ease';
             box.classList.remove('bat-path-highlight');
+            box.classList.remove("bat-target-highlight");
         });
         
         // Clear connection highlights with fade out and reset color
@@ -588,6 +595,457 @@ BatmanSearch.clearHighlights = function() {
         }, 300);
     }
 };
+
+// Enhance BatmanSearch with tree navigation capabilities
+BatmanSearch.findBoxPath = function(targetAccountNumber) {
+    const path = [];
+    let found = false;
+    
+    // Helper function to recursively search through the box hierarchy
+    const searchBoxes = (currentBox) => {
+        if (found) return;
+        
+        // Check if this is the target box
+        if (currentBox.id === targetAccountNumber) {
+            path.push(currentBox);
+            found = true;
+            return;
+        }
+
+        // Get transactions from this box
+        const subTransactions = transactions.filter(tx => 
+            tx.from_account_number === currentBox.id
+        );
+
+        // Check each transaction
+        for (const tx of subTransactions) {
+            const toAccountNumber = tx.to_bank_details.account_number;
+            if (found) break;
+
+            // If this path leads to our target, explore it
+            if (this.isConnectedToTarget(toAccountNumber, targetAccountNumber)) {
+                path.push(currentBox);
+                
+                // Simulate clicking the next button if needed
+                if (!currentBox.subBoxesVisible) {
+                    ShowSubTransactions(currentBox);
+                }
+
+                // Get or wait for the box to be created
+                const nextBox = boxMap.get(toAccountNumber);
+                if (nextBox) {
+                    searchBoxes(nextBox);
+                }
+                
+                if (!found) path.pop();
+            }
+        }
+    };
+
+    // Start search from each root box
+    const rootBoxes = Array.from(boxMap.values()).filter(box => box.level === 0);
+    for (const rootBox of rootBoxes) {
+        if (found) break;
+        searchBoxes(rootBox);
+    }
+
+    return path;
+};
+
+BatmanSearch.isConnectedToTarget = function(fromAccount, targetAccount) {
+    let currentAccount = fromAccount;
+    const visited = new Set();
+
+    while (currentAccount) {
+        if (currentAccount === targetAccount) return true;
+        if (visited.has(currentAccount)) return false;
+        visited.add(currentAccount);
+
+        // Find next transaction from this account
+        const nextTx = transactions.find(tx => 
+            tx.from_account_number === currentAccount &&
+            !visited.has(tx.to_bank_details.account_number)
+        );
+
+        currentAccount = nextTx ? nextTx.to_bank_details.account_number : null;
+    }
+
+    return false;
+};
+
+BatmanSearch.selectNode = function(accountNumber) {
+    // Find the path to the target account
+    const path = this.findBoxPath(accountNumber);
+    
+    if (path.length > 0) {
+        // Clear existing highlights
+        this.clearHighlights();
+        
+        // Highlight the path
+        this.highlightPath(path[path.length - 1]);
+        
+        // Center on the target box
+        this.centerOnBox(path[path.length - 1]);
+    }
+};
+
+// Update the smart search method to search through transactions
+BatmanSearch.smartSearch = function(query) {
+    query = query.toLowerCase();
+    const results = [];
+    const seenAccounts = new Set();
+
+    // Search through transactions
+    transactions.forEach(tx => {
+        // Search in from account
+        if (this.matchAccount(tx.from_account_number, query)) {
+            if (!seenAccounts.has(tx.from_account_number)) {
+                results.push({
+                    accountNumber: tx.from_account_number,
+                    type: 'Source Account',
+                    amount: tx.transaction_amount,
+                    score: this.calculateMatchScore(tx.from_account_number, query)
+                });
+                seenAccounts.add(tx.from_account_number);
+            }
+        }
+
+        // Search in to account
+        const toAccount = tx.to_bank_details?.account_number;
+        if (this.matchAccount(toAccount, query)) {
+            if (!seenAccounts.has(toAccount)) {
+                results.push({
+                    accountNumber: toAccount,
+                    type: 'Destination Account',
+                    amount: tx.transaction_amount,
+                    score: this.calculateMatchScore(toAccount, query)
+                });
+                seenAccounts.add(toAccount);
+            }
+        }
+    });
+
+    return results.sort((a, b) => b.score - a.score);
+};
+
+// Helper method to match account numbers
+BatmanSearch.matchAccount = function(account, query) {
+    return account && account.toLowerCase().includes(query);
+};
+
+// Calculate match score based on how well the account matches the query
+BatmanSearch.calculateMatchScore = function(account, query) {
+    if (!account) return 0;
+    account = account.toLowerCase();
+    
+    if (account === query) return 10;  // Exact match
+    if (account.startsWith(query)) return 8;  // Prefix match
+    if (account.includes(query)) return 5;  // Partial match
+    return 0;
+};
+
+// Update the handle search method
+BatmanSearch.handleSearch = function(query) {
+    if (!query) {
+        this.suggestionsBox.style.display = 'none';
+        this.clearHighlights();
+        return;
+    }
+
+    const results = this.smartSearch(query);
+    this.updateSuggestions(results);
+
+    if (results.length > 0) {
+        const accountNumber = results[0].accountNumber;
+        // Find box if it exists
+        const box = boxMap.get(accountNumber);
+        if (box) {
+            this.selectNode(box);
+        } else {
+            // If box doesn't exist, find and traverse the path
+            this.findAndTraversePath(accountNumber);
+        }
+    }
+};
+
+BatmanSearch.findPathToRoot = function (clickedBox) {
+    const path = [];
+    let currentBox = clickedBox;
+    
+    // First, add the clicked box
+    path.push(currentBox);
+    
+    // Find path to root
+    while (currentBox) {
+        // Find parent connection
+        const parentConnection = connections.find(conn => conn.box2 === currentBox);
+        if (parentConnection) {
+            currentBox = parentConnection.box1;
+            path.push(currentBox);
+        } else {
+            // Check if current box is a root (victim) box
+            if (currentBox.level === 0) {
+                break;
+            }
+            currentBox = null;
+        }
+    }
+    
+    return path;
+};
+
+// Add enhanced path highlighting to BatmanSearch
+BatmanSearch.highlightSearchPath = function(targetBox) {
+    const path = this.findPathToRoot(targetBox);
+    
+    // Clear any existing highlights first
+    this.clearHighlights();
+
+    // Highlight each box and connection in sequence
+    path.forEach((box, index) => {
+        setTimeout(() => {
+            // Add highlight to box with glow effect
+            box.classList.add('bat-path-highlight');
+            
+            // If not the last box, highlight connection to next box
+            if (index < path.length - 1) {
+                const nextBox = path[index + 1];
+                const connection = connections.find(conn => 
+                    (conn.box1 === box && conn.box2 === nextBox) ||
+                    (conn.box2 === box && conn.box1 === nextBox)
+                );
+
+                if (connection) {
+                    connection.path.classList.add('bat-path-connection');
+                    connection.path.setAttribute('stroke', '#74ee15');
+                    connection.path.setAttribute('stroke-width', '3');
+                }
+            }
+
+            // Special highlight for target box
+            if (box === targetBox) {
+                box.classList.add('bat-target-highlight');
+            }
+
+            // Add step indicator
+            const stepLabel = document.createElement('div');
+            stepLabel.className = 'bat-step-label';
+            stepLabel.textContent = `Step ${path.length - index}`;
+            box.appendChild(stepLabel);
+        }, index * 200); // Staggered animation timing
+    });
+
+    // Store highlighted elements for cleanup
+    window.currentHighlightedPath = {
+        boxes: path,
+        targetBox: targetBox
+    };
+};
+
+// Update the styles to include special target highlighting
+const targetStyles = document.createElement('style');
+targetStyles.textContent = `
+    .bat-target-highlight {
+        animation: targetPulse 2s infinite;
+        border: 3px solid #74ee15;
+        box-shadow: 0 0 25px rgba(116, 238, 21, 0.8);
+    }
+
+    .bat-step-label {
+        position: absolute;
+        top: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(30, 30, 30, 0.9);
+        color: #74ee15;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        z-index: 1000;
+    }
+
+    @keyframes targetPulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+`;
+document.head.appendChild(targetStyles);
+
+// Update the findAndTraversePath method to include highlighting
+BatmanSearch.findAndTraversePath = async function(targetAccount) {
+    const transactionPath = this.findTransactionPathToAccount(targetAccount);
+    if (!transactionPath.length) {
+        return;
+    }
+
+    let currentBox = boxMap.get(transactionPath[0]);
+    if (!currentBox) {
+        return;
+    }
+
+    // Traverse and reveal the path
+    for (let i = 0; i < transactionPath.length - 1; i++) {
+        const currentAccount = transactionPath[i];
+        const nextAccount = transactionPath[i + 1];
+        
+        await this.revealNextLevel(currentBox, nextAccount);
+        currentBox = boxMap.get(nextAccount);
+        
+        if (!currentBox) break;
+    }
+
+    // After path is revealed, highlight it
+    const targetBox = boxMap.get(targetAccount);
+    if (targetBox) {
+        this.highlightSearchPath(targetBox);
+        this.centerOnBox(targetBox);
+    }
+};
+
+
+// Helper method to find the complete transaction path
+BatmanSearch.findTransactionPathToAccount = function(targetAccount) {
+    const path = [];
+    const visited = new Set();
+
+    const findPathDFS = (currentAccount) => {
+        if (visited.has(currentAccount)) return false;
+        visited.add(currentAccount);
+        path.push(currentAccount);
+
+        if (currentAccount === targetAccount) return true;
+
+        // Find all transactions from this account
+        const nextTransactions = transactions.filter(tx => 
+            tx.from_account_number === currentAccount
+        );
+
+        // Try each possible path
+        for (const tx of nextTransactions) {
+            const nextAccount = tx.to_bank_details.account_number;
+            if (!visited.has(nextAccount) && findPathDFS(nextAccount)) {
+                return true;
+            }
+        }
+
+        path.pop();
+        return false;
+    };
+
+    // Start from root accounts (victims)
+    const rootAccounts = Array.from(boxMap.values())
+        .filter(box => box.level === 0)
+        .map(box => box.id);
+
+    for (const rootAccount of rootAccounts) {
+        if (findPathDFS(rootAccount)) {
+            return path;
+        }
+    }
+
+    return [];
+};
+
+// Helper method to reveal the next level of boxes
+BatmanSearch.revealNextLevel = function(currentBox, targetAccount) {
+    return new Promise((resolve) => {
+        // If boxes are already visible, resolve immediately
+        if (currentBox.subBoxesVisible) {
+            resolve();
+            return;
+        }
+
+        // Create a mutation observer to watch for new boxes
+        const observer = new MutationObserver((mutations) => {
+            const targetBoxCreated = Array.from(boxMap.values())
+                .some(box => box.id === targetAccount);
+            
+            if (targetBoxCreated) {
+                observer.disconnect();
+                setTimeout(resolve, 500); // Wait for animation to complete
+            }
+        });
+
+        // Start observing the container for changes
+        observer.observe(container, {
+            childList: true,
+            subtree: true
+        });
+
+        // Simulate click on the next button
+        const nextBtn = currentBox.querySelector('.nextbtn');
+        if (nextBtn) {
+            nextBtn.click();
+            
+            // Set a timeout to prevent infinite waiting
+            setTimeout(() => {
+                observer.disconnect();
+                resolve();
+            }, 3000);
+        } else {
+            observer.disconnect();
+            resolve();
+        }
+    });
+};
+
+// Update the suggestion click handler
+BatmanSearch.updateSuggestions = function(results) {
+    this.suggestionsBox.innerHTML = '';
+    
+    if (results.length === 0) {
+        this.suggestionsBox.innerHTML = '<div class="bat-no-results">No matching accounts found</div>';
+        this.suggestionsBox.style.display = 'block';
+        return;
+    }
+
+    results.forEach(({ accountNumber, type, amount }) => {
+        const item = document.createElement('div');
+        item.className = 'bat-suggestion-item';
+        item.dataset.accountNumber = accountNumber;
+        
+        // Get total transaction amount for this account
+        const totalAmount = this.calculateTotalAmount(accountNumber);
+        
+        item.innerHTML = `
+            <div>
+                <div class="bat-account-number">${accountNumber}</div>
+                <div class="bat-suggestion-meta">
+                    ${type} • ${formatIndianCurrency(totalAmount)}
+                </div>
+            </div>
+        `;
+        
+        item.addEventListener('click', async () => {
+            this.searchInput.value = accountNumber;
+            this.suggestionsBox.style.display = 'none';
+            
+            // Clear any existing highlights
+            this.clearHighlights();
+            
+            // Find and reveal the complete path
+            await this.findAndTraversePath(accountNumber);
+        });
+        
+        this.suggestionsBox.appendChild(item);
+    });
+
+    this.suggestionsBox.style.display = 'block';
+};
+
+// Helper method to calculate total transaction amount for an account
+BatmanSearch.calculateTotalAmount = function(accountNumber) {
+    return transactions
+        .filter(tx => tx.to_bank_details.account_number === accountNumber)
+        .reduce((sum, tx) => {
+            const amount = Number(tx.transaction_amount.replace(/[₹,]/g, ''));
+            return sum + (isNaN(amount) ? 0 : amount);
+        }, 0);
+};
+
+
 
 // Initialize the search module
 BatmanSearch.init();
