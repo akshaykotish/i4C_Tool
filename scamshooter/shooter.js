@@ -12,6 +12,10 @@ const HIGHLIGHT_SCALE = 1.05;
 
 let boxHierarchy = new Map(); // To track each box and its sub-boxes
 
+// Add a new Map to track parent-child relationships
+const parentChildMap = new Map(); // Maps child box ID to parent box ID
+
+
 // Map to hold all created boxes by their id
 const boxMap = new Map();
 
@@ -685,24 +689,18 @@ function BuildAllVictims(victims) {
 }
 
 function ShowSubTransactions(box) {
-    //console.log(box.id);
     level++;
-
-    // Get the parent box's level
     let parentLevel = box.level;
 
     // Hide sub-boxes of all other boxes at the same level
-    boxMap.forEach(function(otherBox){
-        if(otherBox.level == box.level && otherBox != box){
+    boxMap.forEach(function(otherBox) {
+        if (otherBox.level == box.level && otherBox != box) {
             hideSubBoxes(otherBox);
             otherBox.subBoxesVisible = false;
         }
     });
 
     if (boxHierarchy.has(box)) {
-        //console.log(boxHierarchy);
-        const subBoxes = boxHierarchy.get(box);
-        //console.log(subBoxes);
         if (box.subBoxesVisible) {
             hideSubBoxes(box);
             box.subBoxesVisible = false;
@@ -714,87 +712,59 @@ function ShowSubTransactions(box) {
     }
 
     const boxRect = box.getBoundingClientRect();
-    //const maxBoxes = 2; // Math.floor(Math.random() * 2); // Random number between 0 and 10
     const colors = ['#E3F2FD', '#FFF9C4', '#FFEBEE', '#E8F5E9', '#F3E5F5', '#FFE0B2', '#F1F8E9', '#FCE4EC', '#E1F5FE', '#FFF3E0'];
-    //const padding = 50; // Padding between boxes
-
     const subBoxes = [];
-
-    var i = 0;
-    var count = 0;
-
     const marginBetweenBoxes = 40 / scale;
     const boxWidth = 240 / scale;
     const boxHeight = 80 / scale;
+    const boxesPerRow = 5;
 
-
-
-
-    // Determine the number of children to calculate proper positioning
+    // Get transactions from this box
     let subBoxesData = transactions.filter(tx => tx.from_account_number === box.id);
 
-    // // If no transactions, alert the user
-    // if (subBoxesData.length === 0) {
-    //     alert("No more transactions!");
-    //     return;
-    // }
+    if (subBoxesData.length === 0) {
+        alert("No more transactions!");
+        return;
+    }
 
-    // Calculate the total width required for all sub-boxes with margins
-    
-
-    // Calculate the total width and height required for all sub-boxes with margins
-    const totalWidth = subBoxesData.length * (boxWidth + marginBetweenBoxes) - marginBetweenBoxes;
-    const totalHeight = subBoxesData.length * (boxHeight + marginBetweenBoxes);
-
-
-
-    // Calculate the starting position for the first box, centered with respect to the parent box
-    
-    const startLeft = (boxRect.left + (boxRect.width - totalWidth) / 2 - panX) / scale;
+    const totalRows = Math.ceil(subBoxesData.length / boxesPerRow);
+    const totalWidthPerRow = Math.min(subBoxesData.length, boxesPerRow) * (boxWidth + marginBetweenBoxes) - marginBetweenBoxes;
+    const startLeft = (boxRect.left + (boxRect.width - totalWidthPerRow) / 2 - panX) / scale;
     const startTop = (boxRect.bottom + marginBetweenBoxes - panY) / scale;
 
-    let nextTopReduction = marginBetweenBoxes; // Initial margin for top, reduced by half for each subsequent box
-
-    subBoxesData.map((tx, index) => {
-        let from_account_number = tx.from_account_number;
-
-        if (from_account_number == box.id) {
+    subBoxesData.forEach((tx, index) => {
+        if (tx.from_account_number === box.id) {
             let to_account_number = tx.to_bank_details.account_number;
 
-            //alert(to_account_number);
-            if(to_account_number === undefined)
-            {
+            if (to_account_number === undefined) {
                 let Withdrawal_Date_Time = tx.Withdrawal_Date_Time;
                 to_account_number = " - WithDrawn on " + Withdrawal_Date_Time;
                 tx["transaction_status"] = "withdrawn";
-                //alert("withdrawn");
             }
 
             let newBox;
-            if (!boxMap.has(to_account_number)) {
-                 // Positioning the sub-boxes in a grid layout
-                 const newBoxLeft = startLeft + index * (boxWidth + marginBetweenBoxes);
-                 const newBoxTop = startTop;
+            let isExistingBox = boxMap.has(to_account_number);
+            
+            // Check if this would create a backward reference
+            let isBackwardReference = isExistingBox && isAncestor(boxMap.get(to_account_number), box);
 
-
-
-                const colorIndex = (box.level + 1) % colors.length;
-                const color = colors[colorIndex];
+            if (!isExistingBox) {
+                const row = Math.floor(index / boxesPerRow);
+                const col = index % boxesPerRow;
+                const newBoxLeft = startLeft + col * (boxWidth + marginBetweenBoxes);
+                const newBoxTop = startTop + row * (boxHeight + marginBetweenBoxes);
+                const colorIndex = (parentLevel + 1) % colors.length;
 
                 newBox = createBox({
                     id: to_account_number,
                     name: "Suspect Account",
-                    color: color,
+                    color: colors[colorIndex],
                     type: "Transaction",
                     top: newBoxTop,
                     left: newBoxLeft,
                     width: boxwidth,
                     height: boxheight,
-                    icon: tx.transaction_status.includes("withdraw") ? icons["withdrawn"] :
-                        tx.transaction_status.includes("lean") ? icons["lean"] :
-                        tx.transaction_status.includes("hold") ? icons["hold"] :
-                        tx.transaction_status.includes("shopping") ? icons["onlineshopping"] :
-                        tx.transaction_status.includes("credit") ? icons["credit"] : icons["debit"],
+                    icon: getTransactionIcon(tx.transaction_status),
                     info: {
                         "from_account_number": tx.from_account_number,
                         "utr_id": tx.utr_id,
@@ -807,75 +777,104 @@ function ShowSubTransactions(box) {
                 });
 
                 newBox.level = parentLevel + 1;
-                count++;
-                // Store the new box in boxMap
                 boxMap.set(to_account_number, newBox);
+                
+                // Record parent-child relationship
+                parentChildMap.set(to_account_number, box.id);
             } else {
                 newBox = boxMap.get(to_account_number);
-                if (newBox != undefined) {
-                    count++;
-                }
             }
 
-            if (newBox) {
-                const connectionKey = `${box.id}-${to_account_number}`;
+            if (newBox && !isBackwardReference) {
+                const connection = createConnection(box, newBox);
                 
-                // Only create connection if it doesn't exist
-                if (!connectionMap.has(connectionKey)) {
-                    const parentConnection = connections.find(connection => 
-                        connection.box1 === box || connection.box2 === box);
-                    const parentColor = parentConnection ? parentConnection.color : 'black';
-                    
-                    // Get transactions between accounts
-                    const transactionsBetweenAccounts = transactionLinksMap.get(connectionKey) || [];
-                    
-                    const connection = createConnection(box, newBox, parentColor, transactionsBetweenAccounts);
-                    
-                    // Only add to connections array if it's new
-                    if (!connections.some(c => c.box1 === box && c.box2 === newBox)) {
-                        connections.push(connection);
-                    }
-                    
-                    subBoxes.push({ element: newBox, connection });
+                if (!connections.some(c => c.box1 === box && c.box2 === newBox)) {
+                    connections.push(connection);
                 }
+
+                subBoxes.push({ element: newBox, connection });
+                
+                makeDraggable(newBox, connections.filter(c => 
+                    c.box1 === newBox || c.box2 === newBox
+                ));
+                
+                enableLineColorChange(connection.path);
             }
-
-            const parentConnection = connections.find(connection => connection.box1 === box || connection.box2 === box);
-            const parentColor = parentConnection ? parentConnection.color : 'black';
-
-            
-            // Get transactions between accounts
-            const key = box.id + '-' + to_account_number;
-            const transactionsBetweenAccounts = transactionLinksMap.get(key) || [];
-
-            const connection = createConnection(box, newBox, parentColor, transactionsBetweenAccounts);
-            connections.push(connection);
-
-            makeDraggable(newBox, connections.filter(c => c.box1 === newBox || c.box2 === newBox));
-
-            enableLineColorChange(connection.path);
-
-            subBoxes.push({ element: newBox, connection });
-
-
-            // Reduce the nextTopReduction by half for the next sub-box
         }
     });
 
-    box.subBoxesVisible = true;
-
-    // //console.log(count);
-    // if (count == 0) {
-    //     alert("No more transactions!");
-    // }
-
-    if (subBoxes.length === 0) {
-        alert("No more transactions!");
+    if (subBoxes.length > 0) {
+        box.subBoxesVisible = true;
+        boxHierarchy.set(box, subBoxes);
     }
-
-    // Store the hierarchy of this box and its sub-boxes
-    boxHierarchy.set(box, subBoxes);
 }
+
+// Helper function to check if a box is an ancestor of another box
+function isAncestor(potentialAncestor, box) {
+    let current = box;
+    while (current) {
+        if (current === potentialAncestor) {
+            return true;
+        }
+        const parentId = parentChildMap.get(current.id);
+        current = parentId ? boxMap.get(parentId) : null;
+    }
+    return false;
+}
+
+
+// Helper function to check if adding a connection would create a cycle
+function wouldCreateCycle(sourceBox, targetAccountNumber) {
+    let visited = new Set();
+    
+    function checkCycle(currentBox) {
+        if (visited.has(currentBox.id)) {
+            return true;
+        }
+        
+        if (currentBox.id === targetAccountNumber) {
+            return true;
+        }
+        
+        visited.add(currentBox.id);
+        
+        const children = boxHierarchy.get(currentBox) || [];
+        for (let child of children) {
+            if (checkCycle(child.element)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    return checkCycle(sourceBox);
+}
+
+
+function getTransactionIcon(status) {
+    return status.includes("withdraw") ? icons["withdrawn"] :
+           status.includes("lean") ? icons["lean"] :
+           status.includes("hold") ? icons["hold"] :
+           status.includes("shopping") ? icons["onlineshopping"] :
+           status.includes("credit") ? icons["credit"] : 
+           icons["debit"];
+}
+
+// Helper function to get connection color
+function getConnectionColor(box) {
+    const parentConnection = connections.find(connection => 
+        connection.box1 === box || connection.box2 === box);
+    return parentConnection ? parentConnection.color : 'black';
+}
+
+// Helper function to get transactions between accounts
+function getTransactionsBetweenAccounts(fromId, toId) {
+    const key = fromId + '-' + toId;
+    return transactionLinksMap.get(key) || [];
+}
+
+
 
 function LoadCase(casename) {
     // Retrieve the item from local storage
@@ -925,58 +924,55 @@ function hideSubBoxes(box) {
     const subBoxes = boxHierarchy.get(box);
     if (subBoxes) {
         subBoxes.forEach(subBox => {
-            subBox.element.style.display = 'none';
-            subBox.connection.path.style.display = 'none';
-            subBox.element.subBoxesVisible = false; // Update 
-            
-            if(!hideboxeslist.includes(subBox.element)){
-                hideboxeslist.push(subBox.element);
-                console.log(" is added in hideboxeslist");
-                hideSubBoxes(subBox.element); // Recursive call to hide sub-boxes
+            // Only hide if the subBox isn't an ancestor of the current box
+            if (!isAncestor(subBox.element, box)) {
+                subBox.element.style.display = 'none';
+                subBox.connection.path.style.display = 'none';
+                
+                // Recursively hide sub-boxes
+                if (subBox.element.subBoxesVisible) {
+                    hideSubBoxes(subBox.element);
+                }
             }
-            
         });
-
-        box.style.display = 'block';
-        box.subBoxesVisible = true; // Update visibility
-        
     }
+    
+    box.subBoxesVisible = false;
 }
+
 
 function showSubBoxes(box) {
     const subBoxes = boxHierarchy.get(box);
     if (subBoxes) {
-        subBoxes.forEach(subBox => {
-
-            setTimeout(() => {
-                subBox.element.style.display = 'block';
-                subBox.element.style.opacity = '0';
-                subBox.element.style.transform = 'scale(0.8)';
+        subBoxes.forEach((subBox, index) => {
+            // Only show if the subBox isn't an ancestor of the current box
+            if (!isAncestor(subBox.element, box)) {
                 setTimeout(() => {
-                    subBox.element.style.opacity = '1';
-                    subBox.element.style.transform = 'scale(1)';
-                }, 100);
-            }, index * 100);
+                    subBox.element.style.display = 'block';
+                    subBox.element.style.opacity = '0';
+                    subBox.element.style.transform = 'scale(0.8)';
+                    
+                    setTimeout(() => {
+                        subBox.element.style.opacity = '1';
+                        subBox.element.style.transform = 'scale(1)';
+                    }, 100);
+                }, index * 100);
 
-
-            subBox.element.style.display = 'block';
-            subBox.connection.path.style.display = 'block';
-            subBox.element.subBoxesVisible = true; // Update visibility
-
-            let indexofbox = hideboxeslist.indexOf(subBox.element);
-            hideboxeslist.slice(indexofbox, 1);
-            
-            
-            connections.forEach(connection => {
-                createOrUpdateCurvedLink(connection.box1, connection.box2, connection.path);
-            });
-            
-            if(showboxeslist.includes(subBox.element)){
-                showboxeslist.push(subBox.element);
-                showSubBoxes(subBox.element); // Recursive call to show sub-boxes
+                subBox.connection.path.style.display = 'block';
             }
         });
+
+        // Update connections
+        setTimeout(() => {
+            connections.forEach(connection => {
+                if (connection.path.style.display !== 'none') {
+                    createOrUpdateCurvedLink(connection.box1, connection.box2, connection.path);
+                }
+            });
+        }, subBoxes.length * 100);
     }
+    
+    box.subBoxesVisible = true;
 }
 
 // Modified findPathToRoot function to properly handle root connections
@@ -1018,14 +1014,15 @@ function findParentBox(box) {
 
 // Function to highlight boxes and connections in the path
 function highlightPath(path) {
-    // Reset all elements to default state
-    resetConnectionHighlights();
+    // First, reduce opacity of all elements
+    fadeAllElements();
     
     // Highlight boxes and connections in the path
     for (let i = 0; i < path.length; i++) {
         const currentBox = path[i];
         
-        // Highlight the current box
+        // Restore and highlight the current box
+        restoreElementOpacity(currentBox);
         highlightBox(currentBox);
         
         // Find and highlight connection to next box in path
@@ -1037,6 +1034,7 @@ function highlightPath(path) {
             );
             
             if (connection) {
+                restoreElementOpacity(connection.path);
                 highlightConnection(connection);
             }
         }
@@ -1047,6 +1045,56 @@ function highlightPath(path) {
         const rootBox = path[path.length - 1];
         rootBox.style.boxShadow = `0 0 20px rgba(255, 0, 0, 0.5)`;
     }
+}
+
+
+// Function to fade all elements
+function fadeAllElements() {
+    // Fade all boxes
+    boxMap.forEach((box) => {
+        box.style.opacity = '0.15';
+    });
+    
+    // Fade all connections
+    connections.forEach(connection => {
+        connection.path.style.opacity = '0.15';
+    });
+}
+
+// Function to restore element opacity
+function restoreElementOpacity(element) {
+    if (element.tagName === 'path') {
+        element.style.opacity = '1';
+    } else {
+        element.style.opacity = '1';
+    }
+}
+
+// Modified reset function to restore all opacities
+function resetConnectionHighlights() {
+    // Reset connections
+    connections.forEach(connection => {
+        if (connection.originalStyles) {
+            connection.path.setAttribute("stroke", connection.originalStyles.stroke);
+            connection.path.setAttribute("stroke-width", connection.originalStyles.strokeWidth);
+            connection.path.setAttribute("filter", connection.originalStyles.filter);
+            connection.path.setAttribute("stroke-dasharray", "none");
+            connection.path.innerHTML = '';
+        }
+        connection.path.style.opacity = '1';
+    });
+    
+    // Reset boxes
+    boxMap.forEach((box) => {
+        if (box.originalStyles) {
+            box.style.boxShadow = box.originalStyles.boxShadow;
+            box.style.transform = box.originalStyles.transform;
+            box.style.zIndex = box.originalStyles.zIndex;
+            box.style.border = box.originalStyles.border;
+            box.style.transition = box.originalStyles.transition;
+        }
+        box.style.opacity = '1';
+    });
 }
 
 
@@ -1178,6 +1226,19 @@ highlightStyles.textContent = `
     }
 `;
 document.head.appendChild(highlightStyles);
+
+// Add smooth transitions for opacity changes
+const transitionStyles = document.createElement('style');
+transitionStyles.textContent = `
+    .box {
+        transition: all 0.3s ease, opacity 0.3s ease;
+    }
+    
+    path {
+        transition: all 0.3s ease, opacity 0.3s ease;
+    }
+`;
+document.head.appendChild(transitionStyles);
 
 LoadGraphs();
 
