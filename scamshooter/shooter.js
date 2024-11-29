@@ -4,10 +4,20 @@ let panY = 0;
 const zoomSensitivity = 0.01;
 let isPanning = false;
 let startX, startY;
+
+// Constants for highlight styling
+const HIGHLIGHT_COLOR = '#74ee15';  // A professional green color
+const HIGHLIGHT_SHADOW = '0 0 15px rgba(76, 175, 80, 0.5)';
+const HIGHLIGHT_SCALE = 1.05;
+
 let boxHierarchy = new Map(); // To track each box and its sub-boxes
 
 // Map to hold all created boxes by their id
 const boxMap = new Map();
+
+// Create a map to track connections between boxes
+const connectionMap = new Map();
+
 
 // Create a container to hold both boxes and lines
 const container = document.createElement('div');
@@ -90,18 +100,46 @@ function createOrUpdateCurvedLink(box1, box2, path) {
     const box2CenterX = box2Rect.left + box2Rect.width / 2;
     const box2CenterY = box2Rect.top + box2Rect.height / 2;
 
-    // Calculate control point for the curve
-    const controlPointX = (box1CenterX + box2CenterX) / 2;
-    const controlPointY = Math.min(box1CenterY, box2CenterY) + 300;
+    // Calculate the vertical distance between boxes
+    const verticalDistance = box2CenterY - box1CenterY;
+    
+    // Calculate control points based on the level difference
+    const levelDifference = box2.level - box1.level;
+    const curveHeight = Math.min(Math.abs(verticalDistance) * 0.5, 100); // Limit maximum curve height
+    
+    // Calculate horizontal offset based on position
+    const horizontalDistance = box2CenterX - box1CenterX;
+    const horizontalOffset = Math.sign(horizontalDistance) * Math.min(Math.abs(horizontalDistance) * 0.2, 50);
 
-    //console.log(panX, panY, controlPointX, controlPointY);
-    //const pathData = `M ${box1CenterX} ${box1CenterY} Q ${controlPointX - 300} ${controlPointY + 300}, ${box2CenterX} ${box2CenterY}`;
-    const pathData = `M ${box1CenterX},${box1CenterY} Q ${box2CenterX},${box2CenterY - 100} ${box2CenterX - 10}, ${box2CenterY - 50} T ${box2CenterX},${box2CenterY}`;
+    // Create control points for a smooth S-curve
+    const cp1x = box1CenterX + horizontalOffset;
+    const cp1y = box1CenterY + curveHeight;
+    const cp2x = box2CenterX - horizontalOffset;
+    const cp2y = box2CenterY - curveHeight;
+
+    // Generate path with cubic Bezier curve
+    const pathData = `M ${box1CenterX},${box1CenterY} 
+                     C ${cp1x},${cp1y} 
+                       ${cp2x},${cp2y} 
+                       ${box2CenterX},${box2CenterY}`;
+
     path.setAttribute("d", pathData);
+    
+    // Add marker for direction
+    path.setAttribute("marker-end", "url(#arrowhead)");
 }
 
-// Function to create a line between two boxes
+
+// Modified createConnection function to prevent duplicates
 function createConnection(box1, box2, color = 'black', transactions = []) {
+    // Create a unique key for this connection
+    const connectionKey = `${box1.id}-${box2.id}`;
+    
+    // Check if this connection already exists
+    if (connectionMap.has(connectionKey)) {
+        return connectionMap.get(connectionKey);
+    }
+
     const svg = document.getElementById('lineContainer');
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
     path.setAttribute("stroke", color);
@@ -109,17 +147,22 @@ function createConnection(box1, box2, color = 'black', transactions = []) {
     path.setAttribute("fill", "none");
     svg.appendChild(path);
 
+    // Create the connection object
+    const connection = { box1, box2, path, color };
+    
+    // Store the connection in our map
+    connectionMap.set(connectionKey, connection);
+
     // Initial line between the two boxes
     createOrUpdateCurvedLink(box1, box2, path);
 
-     // Enable line color change
-     enableLineColorChange(path);
+    // Enable line color change
+    enableLineColorChange(path);
 
-     // Add hover event listener
-     enableTransactionHover(path, transactions);
+    // Add hover event listener
+    enableTransactionHover(path, transactions);
 
-    // Return an object that contains the boxes, the path, and its color
-    return { box1, box2, path, color };
+    return connection;
 }
 
 // Function to enable hover tooltip on connections
@@ -185,7 +228,33 @@ function createBox(boxData) {
 
     // Create box element
     const box = document.createElement('div');
-    box.classList.add('box');
+    box.classList.add('box', 'batman-box', 'compact-box');
+
+
+
+    box.addEventListener('click', function(e) {
+        // Prevent triggering when clicking the next button
+        if (!e.target.classList.contains('nextbtn')) {
+            const path = findPathToRoot(box);
+            highlightPath(path);
+            
+            // Add pulsing effect to show money flow direction
+            path.forEach((boxInPath, index) => {
+                setTimeout(() => {
+                    boxInPath.classList.add('highlight-pulse');
+                    setTimeout(() => boxInPath.classList.remove('highlight-pulse'), 1000);
+                }, index * 200); // Stagger the animation
+            });
+        }
+    });
+
+    // Add click handler to reset highlights when clicking background
+    document.addEventListener('click', function(e) {
+        if (e.target === document.body || e.target.tagName === 'svg') {
+            resetConnectionHighlights();
+        }
+    });
+    
     
     // Assign the box id and name to attributes
     box.id = id;
@@ -196,8 +265,12 @@ function createBox(boxData) {
     box.style.top = `${top}px`;
     box.style.left = `${left}px`;
     box.style.position = 'absolute';
-    box.style.width = `${width}px`;
-    box.style.height = `${height}px`;
+    // Apply styles
+    box.style.width = `${width * 0.7}px`; // Adjust box width
+    //box.style.height = `${height * 0.7}px`; // Adjust box height
+    box.style.borderRadius = '8px';
+    box.style.padding = '2px';
+    box.style.transition = 'all 0.3s ease';
     box.style.cursor = 'grab';
     //box.style.backgroundColor = color || '#f0f4f8'; // Default background color
     //box.style.color = forecolor || '#333'; // Default text color
@@ -471,8 +544,14 @@ container.appendChild(svg);
 
 const connections = [];
 
-function DoConnection(boxa, boxb){
-    connections.push(createConnection(boxa, boxb));
+// Modified function to handle connection management
+function DoConnection(boxa, boxb) {
+    const connection = createConnection(boxa, boxb);
+    
+    // Only add to connections array if it's a new connection
+    if (!connections.some(c => c.box1 === boxa && c.box2 === boxb)) {
+        connections.push(connection);
+    }
 
     const uniqueBoxes = new Set();
     connections.forEach(connection => {
@@ -483,10 +562,8 @@ function DoConnection(boxa, boxb){
     uniqueBoxes.forEach(box => {
         addNewBoxesOnClick(box);
         const relatedConnections = connections.filter(c => c.box1 === box || c.box2 === box);
-        makeDraggable(box, relatedConnections);  
+        makeDraggable(box, relatedConnections);
     });
-
-    connections.forEach(connection => enableLineColorChange(connection.path));
 }
 
  
@@ -647,8 +724,12 @@ function ShowSubTransactions(box) {
     var i = 0;
     var count = 0;
 
-    const marginBetweenBoxes = 200/scale; // Margin between each sub-box
-    const boxWidth = 280/scale; // Width of each sub-box
+    const marginBetweenBoxes = 40 / scale;
+    const boxWidth = 240 / scale;
+    const boxHeight = 80 / scale;
+
+
+
 
     // Determine the number of children to calculate proper positioning
     let subBoxesData = transactions.filter(tx => tx.from_account_number === box.id);
@@ -660,10 +741,18 @@ function ShowSubTransactions(box) {
     // }
 
     // Calculate the total width required for all sub-boxes with margins
+    
+
+    // Calculate the total width and height required for all sub-boxes with margins
     const totalWidth = subBoxesData.length * (boxWidth + marginBetweenBoxes) - marginBetweenBoxes;
+    const totalHeight = subBoxesData.length * (boxHeight + marginBetweenBoxes);
+
+
 
     // Calculate the starting position for the first box, centered with respect to the parent box
-    const startLeft = boxRect.left - (totalWidth / 2); // Center all sub-boxes around the parent box
+    
+    const startLeft = (boxRect.left + (boxRect.width - totalWidth) / 2 - panX) / scale;
+    const startTop = (boxRect.bottom + marginBetweenBoxes - panY) / scale;
 
     let nextTopReduction = marginBetweenBoxes; // Initial margin for top, reduced by half for each subsequent box
 
@@ -684,11 +773,10 @@ function ShowSubTransactions(box) {
 
             let newBox;
             if (!boxMap.has(to_account_number)) {
-                // Positioning the sub-boxes
-                const newBoxTop = (boxRect.top + boxRect.height + (nextTopReduction/2) - panY) / scale;
+                 // Positioning the sub-boxes in a grid layout
+                 const newBoxLeft = startLeft + index * (boxWidth + marginBetweenBoxes);
+                 const newBoxTop = startTop;
 
-                // Calculate the left position for each sub-box
-                const newBoxLeft = (startLeft + index * (boxWidth + marginBetweenBoxes) - panX) / scale;
 
 
                 const colorIndex = (box.level + 1) % colors.length;
@@ -727,6 +815,29 @@ function ShowSubTransactions(box) {
                 newBox = boxMap.get(to_account_number);
                 if (newBox != undefined) {
                     count++;
+                }
+            }
+
+            if (newBox) {
+                const connectionKey = `${box.id}-${to_account_number}`;
+                
+                // Only create connection if it doesn't exist
+                if (!connectionMap.has(connectionKey)) {
+                    const parentConnection = connections.find(connection => 
+                        connection.box1 === box || connection.box2 === box);
+                    const parentColor = parentConnection ? parentConnection.color : 'black';
+                    
+                    // Get transactions between accounts
+                    const transactionsBetweenAccounts = transactionLinksMap.get(connectionKey) || [];
+                    
+                    const connection = createConnection(box, newBox, parentColor, transactionsBetweenAccounts);
+                    
+                    // Only add to connections array if it's new
+                    if (!connections.some(c => c.box1 === box && c.box2 === newBox)) {
+                        connections.push(connection);
+                    }
+                    
+                    subBoxes.push({ element: newBox, connection });
                 }
             }
 
@@ -837,6 +948,18 @@ function showSubBoxes(box) {
     const subBoxes = boxHierarchy.get(box);
     if (subBoxes) {
         subBoxes.forEach(subBox => {
+
+            setTimeout(() => {
+                subBox.element.style.display = 'block';
+                subBox.element.style.opacity = '0';
+                subBox.element.style.transform = 'scale(0.8)';
+                setTimeout(() => {
+                    subBox.element.style.opacity = '1';
+                    subBox.element.style.transform = 'scale(1)';
+                }, 100);
+            }, index * 100);
+
+
             subBox.element.style.display = 'block';
             subBox.connection.path.style.display = 'block';
             subBox.element.subBoxesVisible = true; // Update visibility
@@ -856,6 +979,206 @@ function showSubBoxes(box) {
         });
     }
 }
+
+// Modified findPathToRoot function to properly handle root connections
+function findPathToRoot(clickedBox) {
+    const path = [];
+    let currentBox = clickedBox;
+    
+    // First, add the clicked box
+    path.push(currentBox);
+    
+    // Find path to root
+    while (currentBox) {
+        // Find parent connection
+        const parentConnection = connections.find(conn => conn.box2 === currentBox);
+        if (parentConnection) {
+            currentBox = parentConnection.box1;
+            path.push(currentBox);
+        } else {
+            // Check if current box is a root (victim) box
+            if (currentBox.level === 0) {
+                break;
+            }
+            currentBox = null;
+        }
+    }
+    
+    return path;
+}
+
+// Helper function to find parent box using connections
+function findParentBox(box) {
+    for (const connection of connections) {
+        if (connection.box2 === box) {
+            return connection.box1;
+        }
+    }
+    return null;
+}
+
+// Function to highlight boxes and connections in the path
+function highlightPath(path) {
+    // Reset all elements to default state
+    resetConnectionHighlights();
+    
+    // Highlight boxes and connections in the path
+    for (let i = 0; i < path.length; i++) {
+        const currentBox = path[i];
+        
+        // Highlight the current box
+        highlightBox(currentBox);
+        
+        // Find and highlight connection to next box in path
+        if (i < path.length - 1) {
+            const nextBox = path[i + 1];
+            const connection = connections.find(conn => 
+                (conn.box1 === nextBox && conn.box2 === currentBox) ||
+                (conn.box2 === nextBox && conn.box1 === currentBox)
+            );
+            
+            if (connection) {
+                highlightConnection(connection);
+            }
+        }
+    }
+    
+    // Add emphasis to the root node
+    if (path.length > 0) {
+        const rootBox = path[path.length - 1];
+        rootBox.style.boxShadow = `0 0 20px rgba(255, 0, 0, 0.5)`;
+    }
+}
+
+
+// Function to highlight a single box
+function highlightBox(box) {
+    if (!box.originalStyles) {
+        box.originalStyles = {
+            boxShadow: box.style.boxShadow,
+            transform: box.style.transform,
+            zIndex: box.style.zIndex,
+            border: box.style.border,
+            transition: box.style.transition
+        };
+    }
+
+    box.style.boxShadow = `0 0 20px 5px rgba(76, 175, 80, 0.8), 0 0 40px 10px rgba(76, 175, 80, 0.5)`;
+    box.style.transform = `scale(${HIGHLIGHT_SCALE})`;
+    box.style.zIndex = '1000';
+    box.style.border = `2px solid #4CAF50`;
+    box.style.transition = 'all 0.3s ease';
+}
+
+// Function to highlight a connection
+function highlightConnection(connection) {
+    if (!connection.originalStyles) {
+        connection.originalStyles = {
+            stroke: connection.path.getAttribute("stroke"),
+            strokeWidth: connection.path.getAttribute("stroke-width"),
+            filter: connection.path.getAttribute("filter")
+        };
+    }
+    
+    connection.path.setAttribute("stroke", HIGHLIGHT_COLOR);
+    connection.path.setAttribute("stroke-width", "4");
+    connection.path.setAttribute("filter", `drop-shadow(0 0 3px ${HIGHLIGHT_COLOR})`);
+    connection.path.style.zIndex = "1000";
+    
+    // Add flow animation
+    connection.path.setAttribute("stroke-dasharray", "10,5");
+    connection.path.innerHTML = `
+        <animate attributeName="stroke-dashoffset" 
+                 from="100" 
+                 to="0" 
+                 dur="1s" 
+                 repeatCount="indefinite" />
+    `;
+}
+
+// Function to reset all highlights
+function resetConnectionHighlights() {
+    // Reset connections
+    connections.forEach(connection => {
+        if (connection.originalStyles) {
+            connection.path.setAttribute("stroke", connection.originalStyles.stroke);
+            connection.path.setAttribute("stroke-width", connection.originalStyles.strokeWidth);
+            connection.path.setAttribute("filter", connection.originalStyles.filter);
+            connection.path.setAttribute("stroke-dasharray", "none");
+            connection.path.innerHTML = '';
+        }
+    });
+    
+    // Reset boxes
+    boxMap.forEach((box) => {
+        if (box.originalStyles) {
+            box.style.boxShadow = box.originalStyles.boxShadow;
+            box.style.transform = box.originalStyles.transform;
+            box.style.zIndex = box.originalStyles.zIndex;
+            box.style.border = box.originalStyles.border;
+            box.style.transition = box.originalStyles.transition;
+        }
+    });
+}
+
+
+// Add these CSS rules to your stylesheet
+const style1 = document.createElement('style');
+style1.textContent = `
+    .highlight-pulse {
+        animation: pulse 1s ease-in-out;
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    .box {
+        transition: transform 0.3s ease, box-shadow 0.3s ease, z-index 0s;
+    }
+`;
+document.head.appendChild(style1);
+
+
+// Create SVG marker for arrowhead if it doesn't exist
+function createArrowMarker() {
+    const svg = document.getElementById('lineContainer');
+    const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+    const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
+    
+    marker.setAttribute("id", "arrowhead");
+    marker.setAttribute("markerWidth", "10");
+    marker.setAttribute("markerHeight", "7");
+    marker.setAttribute("refX", "9");
+    marker.setAttribute("refY", "3.5");
+    marker.setAttribute("orient", "auto");
+    
+    const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    polygon.setAttribute("points", "0 0, 10 3.5, 0 7");
+    polygon.setAttribute("fill", "#000");
+    
+    marker.appendChild(polygon);
+    defs.appendChild(marker);
+    svg.appendChild(defs);
+}
+
+// Call this function when initializing the SVG
+createArrowMarker();
+
+// Add necessary CSS
+const highlightStyles = document.createElement('style');
+highlightStyles.textContent = `
+    .box {
+        transition: all 0.3s ease;
+    }
+    
+    path {
+        transition: stroke 0.3s ease, stroke-width 0.3s ease;
+    }
+`;
+document.head.appendChild(highlightStyles);
 
 LoadGraphs();
 

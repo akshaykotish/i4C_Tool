@@ -5,19 +5,90 @@ button{
     background-color: white;
 }
 
-
-svg {
-    position: absolute; 
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-}
+/* Base styles */
 body {
     margin: 0;
     overflow: hidden;
     font-family: "Poppins", sans-serif;
-    font-style: normal;
+    background: #121212;
+    color: #ffffff;
+}
+
+/* Container styles */
+#container {
+    background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+}
+
+/* SVG styles */
+svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    filter: drop-shadow(0 0 8px rgba(0, 150, 255, 0.2));
+}
+
+svg path {
+    stroke-width: 2;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 4px rgba(0, 150, 255, 0.3));
+}
+
+/* Zoom and pan indicators */
+.zoom-indicator {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #64B5F6;
+}
+
+/* Next button */
+.nextbtn {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64B5F6;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.nextbtn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+/* Tooltip styles */
+.tooltip {
+    background: rgba(18, 18, 18, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    font-size: 12px;
+    max-width: 300px;
+}
+
+.tooltip ul {
+    margin: 0;
+    padding: 0 0 0 16px;
+}
+
+.tooltip li {
+    margin: 4px 0;
+    color: #64B5F6;
 }
 
 .RightBox{
