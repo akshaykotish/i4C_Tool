@@ -228,7 +228,7 @@ function createBox(boxData) {
 
     // Create box element
     const box = document.createElement('div');
-    box.classList.add('box', 'batman-box', 'compact-box');
+    box.classList.add('box', 'batman-box');
 
 
 
@@ -275,6 +275,12 @@ function createBox(boxData) {
     //box.style.backgroundColor = color || '#f0f4f8'; // Default background color
     //box.style.color = forecolor || '#333'; // Default text color
 
+    // Calculate the total amount of transactions to this box id
+    const totalAmount = transactions
+    .filter(tx => tx.to_bank_details.account_number === id)
+    .reduce((sum, tx) => sum + Number(tx.transaction_amount.replaceAll(",", "").replace("₹", "")), 0);
+
+
 
     // Add the information as a data attribute
     box.setAttribute('data-info', JSON.stringify(info));
@@ -282,39 +288,32 @@ function createBox(boxData) {
     const identificationRow = document.createElement('div');
     identificationRow.classList.add("identificationRow");
 
-    // Create icon element
     const iconElement = document.createElement('img');
     iconElement.src = icon;
     iconElement.classList.add('box-icon');
-
     identificationRow.appendChild(iconElement);
 
-    const boxinfo = document.createElement('div');
-    boxinfo.classList.add("boxinfo");
-    boxinfo.innerHTML = `
-        <span class='type'>${type} (Level ${boxData.level || 0})</span>
-        <div class='dividerline'></div>
-        <span class='id'>${id}</span>
-    `;
-
-    identificationRow.appendChild(boxinfo);
+    const idElement = document.createElement('span');
+    idElement.classList.add('box-id');
+    idElement.textContent = id.length > 15 ? id.substring(0, 15) + "..." : id;
+    identificationRow.appendChild(idElement);
 
 
-    // Calculate the total amount of transactions to this box id
-    const totalAmount = transactions
-        .filter(tx => tx.to_bank_details.account_number === id)
-        .reduce((sum, tx) => sum + Number(tx.transaction_amount.replaceAll(",", "").replace("₹", "")), 0);
+    const amountElement = document.createElement('span');
+    amountElement.classList.add('box-amount');
+    amountElement.textContent = formatIndianCurrency(totalAmount);
+    identificationRow.appendChild(amountElement);
 
-        
+    const typeElement = document.createElement('span');
+    typeElement.classList.add('box-type');
+    typeElement.textContent = type;
+    box.appendChild(typeElement);
+
     
-    const amountinfo = document.createElement('div');
-    amountinfo.classList.add("amountinfo");
-    amountinfo.innerHTML = `
-        <span class='id'>${formatIndianCurrency(totalAmount)}</span>
-    `;
-
-    identificationRow.appendChild(amountinfo);
-
+    const levelElement = document.createElement('span');
+    levelElement.classList.add('box-level');
+    levelElement.textContent = boxData.level || 0;
+    typeElement.appendChild(levelElement);
     
 
     // Create button for showing additional information
@@ -329,7 +328,7 @@ function createBox(boxData) {
     identificationRow.appendChild(btn1);
 
     // Event listener for showing the info panel
-    boxinfo.addEventListener('click', function() {
+    idElement .addEventListener('click', function() {
         showInfoPanel(id, name, info);
     });
 

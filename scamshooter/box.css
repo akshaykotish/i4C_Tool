@@ -197,42 +197,47 @@
     padding: 10px;
     border: 1px solid #444;
 }
-
-
-.batman-box {
-    background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
-    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.6), -4px -4px 10px rgba(255, 255, 255, 0.05);
-}
-
-.batman-box:hover {
-    transform: translateY(-4px);
-    box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.7), -6px -6px 12px rgba(255, 255, 255, 0.05);
-}
-
 .batman-box .identificationRow {
+    display: flex;
+    align-items: center;
     justify-content: space-between;
+    padding: 4px 8px;
 }
 
 .batman-box .box-icon {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     margin-right: 8px;
 }
 
-.batman-box .boxinfo .id {
-    font-size: 11px;
+.batman-box .box-id {
+    font-size: 12px;
+    font-weight: bold;
 }
 
-.batman-box .boxinfo .type {
-    font-size: 9px;
+.batman-box .box-level {
+    font-size: 10px;
+    color: #888;
+    margin-left: 2px;
 }
 
-.batman-box .amountinfo {
-    font-size: 11px;
-    padding-right: 8px;
+.batman-box .box-amount {
+    font-size: 12px;
+    font-weight: bold;
+    color: #4CAF50;
+    margin-left: auto;
+    margin-right: 8px;
 }
 
-.batman-box .nextbtn {
-    width: 24px;
-    height: 24px;
+.batman-box .box-type {
+    position: absolute;
+    top: -10px;
+    left: 10%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    font-weight: bold;
+    color: #FF5722;
+    background-color: rgba(255, 255, 255, 0.825);
+    padding: 2px 6px;
+    border-radius: 4px;
 }
