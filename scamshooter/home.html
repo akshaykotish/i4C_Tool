@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omnitrix CSV Processor</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+        
+        :root {
+            --omnitrix-black: #1a1a1a;
+            --omnitrix-green: #00ff00;
+            --omnitrix-dark-green: #006400;
+            --omnitrix-gray: #4a4a4a;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--omnitrix-black);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: radial-gradient(circle at 50% 50%, rgba(0, 255, 0, 0.1) 0%, transparent 60%);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: rgba(26, 26, 26, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+            border: 1px solid rgba(0, 255, 0, 0.1);
+        }
+
+        .omnitrix-logo {
+            width: 100px;
+            height: 100px;
+            margin: 1rem auto;
+            display: block;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { filter: drop-shadow(0 0 5px var(--omnitrix-green)); }
+            50% { filter: drop-shadow(0 0 15px var(--omnitrix-green)); }
+            100% { filter: drop-shadow(0 0 5px var(--omnitrix-green)); }
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--omnitrix-green);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+
+        .upload-area {
+            border: 2px dashed var(--omnitrix-gray);
+            padding: 2rem;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 6px;
+            background: linear-gradient(45deg, transparent, rgba(0, 255, 0, 0.1), transparent);
+            background-size: 200% 200%;
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 200% 200%; }
+        }
+
+        .upload-area:hover {
+            border-color: var(--omnitrix-green);
+            background-color: rgba(0, 255, 0, 0.05);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--omnitrix-green);
+            background-color: rgba(0, 255, 0, 0.1);
+        }
+
+        .btn {
+            background-color: var(--omnitrix-dark-green);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .btn:hover {
+            background-color: var(--omnitrix-green);
+            color: var(--omnitrix-black);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3);
+        }
+
+        .btn:disabled {
+            background-color: var(--omnitrix-gray);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        #status {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .success {
+            background-color: rgba(0, 255, 0, 0.2);
+            border: 1px solid var(--omnitrix-green);
+        }
+
+        .error {
+            background-color: rgba(255, 0, 0, 0.2);
+            border: 1px solid #ff0000;
+        }
+
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <svg class="omnitrix-logo" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="45" fill="none" stroke="var(--omnitrix-green)" stroke-width="2"/>
+            <circle cx="50" cy="50" r="35" fill="var(--omnitrix-green)" opacity="0.3"/>
+            <path d="M50 15 L50 85 M15 50 L85 50" stroke="var(--omnitrix-green)" stroke-width="2"/>
+        </svg>
+        <h1>Omnitrix</h1>
+        
+        <div class="upload-area" id="dropZone">
+            <p>Drop CSV file here or click to upload</p>
+            <input type="file" id="fileInput" accept=".csv" style="display: none">
+        </div>
+
+        <div id="status"></div>
+
+        <div class="buttons-container">
+            <button class="btn" id="processBtn" disabled>Process CSV</button>
+            <button class="btn" id="graphBtn" disabled>View Graph</button>
+        </div>
+    </div>
+
+    <script>
+        // ... [The JavaScript code remains the same as in the previous version] ...
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const processBtn = document.getElementById('processBtn');
+        const graphBtn = document.getElementById('graphBtn');
+        const status = document.getElementById('status');
+        let selectedFile = null;
+
+        // Handle drag and drop events
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            dropZone.classList.add('dragover');
+        }
+
+        function unhighlight() {
+            dropZone.classList.remove('dragover');
+        }
+
+        // Handle file selection
+        dropZone.addEventListener('drop', handleDrop, false);
+        dropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFileSelect);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        function handleFileSelect(e) {
+            const files = e.target.files;
+            handleFiles(files);
+        }
+
+        function handleFiles(files) {
+            if (files.length > 0 && files[0].type === 'text/csv') {
+                selectedFile = files[0];
+                showStatus('File selected: ' + selectedFile.name, 'success');
+                processBtn.disabled = false;
+            } else {
+                showStatus('Please select a valid CSV file', 'error');
+                processBtn.disabled = true;
+            }
+        }
+
+        function showStatus(message, type) {
+            status.textContent = message;
+            status.className = type;
+            status.style.display = 'block';
+        }
+
+        // Process CSV file
+        processBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+
+            try {
+                const text = await selectedFile.text();
+                const jsonData = processCSV(text);
+                localStorage.setItem('Case1', JSON.stringify(jsonData));
+                showStatus('CSV processed successfully!', 'success');
+                graphBtn.disabled = false;
+            } catch (error) {
+                showStatus('Error processing CSV: ' + error.message, 'error');
+                graphBtn.disabled = true;
+            }
+        });
+
+        function processCSV(csvText) {
+            const rows = csvText.split('\n').map(row => {
+                // Handle cases where fields might contain commas within quotes
+                const matches = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
+                return matches ? matches.map(val => val.replace(/^"|"$/g, '')) : [];
+            });
+            
+            const headers = rows[0];
+            const data = {
+                victim: [], // Keeping this empty as CSV doesn't contain victim data
+                transaction_details: []
+            };
+
+            for (let i = 1; i < rows.length; i++) {
+                if (rows[i].length > 1) { // Skip empty rows
+                    const row = rows[i];
+                    const mappedData = {
+                        "S_No": row[0] || "",
+                        "from_account_number": row[4] || "", // Account No./ (Wallet /PG/PA) Id
+                        "transaction_id": row[2] || "", // Transaction Id / UTR Number
+                        "to_bank_name": row[6] || "", // Bank/FIs
+                        "to_account_number": row[7] || "", // Account No
+                        "IFSC_Code": row[8] || "", // Ifsc Code
+                        "utr_id": row[15] || "", // Transaction ID / UTR Number
+                        "Transaction_Date_Time": row[14] || "", // Transaction Date
+                        "transaction_amount": row[16] || "", // Transaction Amount
+                        "Disputed_Amount": "", // Not directly available in CSV
+                        "transaction_status": row[5] || "", // Action Taken
+                        "from0_bank_name": "", // Not directly available in CSV
+                        "to_bank_details": {
+                            "name": row[6] || "", // Bank/FIs
+                            "account_number": row[7] || "", // Account No
+                            "ifsc": row[8] || "" // Ifsc Code
+                        },
+                        "Date_of_Action": row[19] || "" // Date of Action
+                    };
+
+                    // Clean the data by removing any quotes and extra spaces
+                    Object.keys(mappedData).forEach(key => {
+                        if (typeof mappedData[key] === 'string') {
+                            mappedData[key] = mappedData[key].trim().replace(/^['"]|['"]$/g, '');
+                        } else if (typeof mappedData[key] === 'object' && mappedData[key] !== null) {
+                            Object.keys(mappedData[key]).forEach(subKey => {
+                                mappedData[key][subKey] = mappedData[key][subKey].trim().replace(/^['"]|['"]$/g, '');
+                            });
+                        }
+                    });
+
+                    data.transaction_details.push(mappedData);
+                }
+            }
+
+            return data;
+        }
+
+        function extractRowData(row, headers) {
+            const rowData = {};
+            headers.forEach((header, index) => {
+                const value = row[index]?.trim().replace(/^'|'$/g, '') || "";
+                rowData[header.trim()] = value;
+            });
+
+            return {
+                S_No: rowData['S No.'] || "",
+                from_account_number: rowData['Account No./ (Wallet /PG/PA) Id'] || "",
+                transaction_id: rowData['Transaction Id / UTR Number'] || "",
+                to_bank_name: rowData['Bank/FIs'] || "",
+                to_account_number: rowData['Account No'] || "",
+                IFSC_Code: rowData['Ifsc Code'] || "",
+                utr_id: rowData['Transaction ID / UTR Number'] || "",
+                Transaction_Date_Time: rowData['Transaction Date'] || "",
+                transaction_amount: rowData['Transaction Amount'] || "",
+                transaction_status: rowData['Action Taken'] || "",
+                from_bank_name: "",
+                to_bank_details: {
+                    name: rowData['Bank/FIs'] || "",
+                    account_number: rowData['Account No'] || "",
+                    ifsc: rowData['Ifsc Code'] || "",
+                },
+                Date_of_Action: rowData['Date of Action'] || ""
+            };
+        }
+
+        // Handle graph button click
+        graphBtn.addEventListener('click', () => {
+            window.location.href = '/graph.html';
+        });
+    </script>
+</body>
+</html>

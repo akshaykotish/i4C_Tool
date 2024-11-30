@@ -299,7 +299,7 @@ function createBox(boxData) {
 
     const idElement = document.createElement('span');
     idElement.classList.add('box-id');
-    idElement.textContent = id.length > 15 ? id.substring(0, 15) + "..." : id;
+    idElement.textContent = id.length > 15 ? id.substring(0, 13) + "..." : id;
     identificationRow.appendChild(idElement);
 
 
