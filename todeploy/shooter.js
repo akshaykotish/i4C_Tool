@@ -736,11 +736,14 @@ function ShowSubTransactions(box) {
         if (tx.from_account_number === box.id) {
             let to_account_number = tx.to_bank_details.account_number;
 
-            if (to_account_number === undefined) {
+            let tx_type = tx.type;
+            if (to_account_number === undefined || tx_type == "atm_transaction") {
                 let Withdrawal_Date_Time = tx.Withdrawal_Date_Time;
                 to_account_number = " - WithDrawn on " + Withdrawal_Date_Time;
                 tx["transaction_status"] = "withdrawn";
             }
+
+
 
             let newBox;
             let isExistingBox = boxMap.has(to_account_number);

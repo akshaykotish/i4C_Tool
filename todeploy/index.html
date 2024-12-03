@@ -3,38 +3,962 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loading Omnitrix...</title>
+    <title>Omnitrix Transaction Analyzer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #fbbf24;
+            --primary-dark: #d97706;
+            --primary-light: #fcd34d;
+            --background: #0f172a;
+            --surface: #1e293b;
+            --surface-hover: #334155;
+            --error: #ef4444;
+            --success: #10b981;
+            --text: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: #475569;
         }
         
-        iframe {
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.5) 0%, var(--background) 100%),
+                linear-gradient(45deg, rgba(251, 191, 36, 0.05) 0%, transparent 100%);
+        }
+
+        /* Branding Styles */
+        .branding {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            background: rgba(30, 41, 59, 0.95);
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                0 2px 4px -1px rgba(0, 0, 0, 0.06),
+                0 0 0 1px rgba(251, 191, 36, 0.1);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+        }
+
+        .branding:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                0 4px 6px -2px rgba(0, 0, 0, 0.05),
+                0 0 0 2px rgba(251, 191, 36, 0.2);
+        }
+
+        .brand-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 0.1em;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .brand-divider {
             width: 100%;
-            height: 100%;
+            height: 2px;
+            background: linear-gradient(
+                to right,
+                rgba(251, 191, 36, 0.1),
+                rgba(251, 191, 36, 0.5),
+                rgba(251, 191, 36, 0.1)
+            );
+            margin: 8px 0;
+        }
+
+        .brand-tagline {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        /* Container and Header */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            padding-top: 6rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .batman-logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 1.5rem;
+            animation: glow 3s infinite;
+        }
+
+        @keyframes glow {
+            0% { filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.3)); }
+            50% { filter: drop-shadow(0 0 16px rgba(251, 191, 36, 0.5)); }
+            100% { filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.3)); }
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--surface);
+            margin-bottom: 2rem;
+        }
+
+        .upload-area:hover, .upload-area.dragover {
+            border-color: var(--primary);
+            background: var(--surface-hover);
+            transform: translateY(-2px);
+        }
+
+        .upload-area i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .upload-area p {
+            color: var(--text);
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        /* Status and Preview */
+        .status {
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .status.success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        .status.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--error);
+            color: var(--error);
+        }
+
+        .preview {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 12px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+            color: var(--primary-light);
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        /* Buttons */
+        .button-container {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: none;
+            background: var(--primary);
+            color: var(--background);
+            font-size: 1rem;
+            min-width: 160px;
+            justify-content: center;
+        }
+
+        .btn:hover:not(:disabled) {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.2);
+        }
+
+        .btn:disabled {
+            background: var(--border);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* Instructions Card */
+        .card {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 3rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .instructions {
+            border-left: 4px solid var(--primary);
+        }
+
+        .instructions h2 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .instructions ul {
+            list-style: none;
+            margin-left: 1rem;
+        }
+
+        .instructions li {
+            margin: 0.75rem 0;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .instructions li:before {
+            content: "→";
+            color: var(--primary);
+        }
+
+        .code {
+            background: rgba(251, 191, 36, 0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+            color: var(--primary);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--surface);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Loading Animation */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading {
+            position: relative;
+            pointer-events: none;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            width: 1.2em;
+            height: 1.2em;
+            top: 50%;
+            left: 50%;
+            margin: -0.6em 0 0 -0.6em;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+                padding-top: 5rem;
+            }
+
+            .branding {
+                top: 16px;
+                left: 16px;
+                padding: 12px;
+            }
+
+            .title {
+                font-size: 1.8rem;
+            }
+
+            .batman-logo {
+                width: 80px;
+                height: 80px;
+            }
+
+            .upload-area {
+                padding: 2rem;
+            }
+
+            .button-container {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .instructions li {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Usage Guide Styles */
+        .usage-guide {
+            margin-top: 3rem;
+        }
+
+        .usage-guide h2 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .usage-guide ol, .usage-guide ul {
+            margin-left: 2rem;
+        }
+
+        .usage-guide li {
+            margin: 0.5rem 0;
+        }
+
+        .usage-guide code {
+            background-color: rgba(251, 191, 36, 0.1);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+            color: var(--primary);
+        }
+
+        .usage-guide img {
+            max-width: 100%;
+            display: block;
+            margin: 1rem auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
 <body>
-    <iframe id="caseFrame"></iframe>
+    <!-- Branding -->
+    <div class="branding" onclick="window.open('https://www.akshaykotish.com', '_blank')">
+        <h1 class="brand-title">OMNITRIX</h1>
+        <div class="brand-divider"></div>
+        <p class="brand-tagline">An Akshay Kotish & Co. Product</p>
+    </div>
+
+    <div class="container">
+        <header class="header">
+            <svg class="batman-logo" viewBox="0 0 100 60">
+                <defs>
+                    <linearGradient id="batGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <path d="M50 5
+                         C65 5 75 15 85 25
+                         C95 35 95 45 95 50
+                         C95 70 80 85 50 85
+                         C20 85 5 70 5 50
+                         C5 45 5 35 15 25
+                         C25 15 35 5 50 5
+                         Z" 
+                      fill="url(#batGradient)"
+                      stroke="var(--primary)"
+                      stroke-width="1"/>
+                <path d="M50 20
+                         C60 20 65 25 70 30
+                         C75 35 75 40 75 45
+                         C75 60 65 70 50 70
+                         C35 70 25 60 25 45
+                         C25 40 25 35 30 30
+                         C35 25 40 20 50 20
+                         Z"
+                      fill="var(--background)"
+                      opacity="0.3"/>
+            </svg>
+            <h1 class="title">Omnitrix Transactions Analyzer</h1>
+        </header>
+
+        <div class="upload-area" id="dropZone">
+            <i class="fas fa-file-upload"></i>
+            <p>Drop CSV file here or click to upload</p>
+            <input type="file" id="fileInput" accept=".csv" style="display: none">
+        </div>
+
+        <div id="status" class="status"></div>
+        <div id="preview" class="preview"></div>
+
+        <div class="button-container">
+            <button class="btn" id="sampleBtn">
+                <i class="fas fa-vial"></i> Load Sample Data
+            </button>
+            <button class="btn" id="sampleDownloadBtn">
+                <i class="fas fa-download"></i> Download Sample CSV
+            </button>
+            <button class="btn" id="processBtn" disabled>
+                <i class="fas fa-cogs"></i> Process CSV
+            </button>
+            <button class="btn" id="downloadBtn" disabled>
+                <i class="fas fa-download"></i> Download JSON
+            </button>
+            <button class="btn" id="graphBtn" disabled>
+                <i class="fas fa-project-diagram"></i> View Graph
+            </button>
+        </div>
+
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- ... (existing head content) ... -->
+</head>
+<body>
+    <!-- ... (existing body content) ... -->
+
+    <div class="container">
+        <!-- ... (existing container content) ... -->
+
+        <div class="card instructions">
+            <h2><i class="fas fa-info-circle"></i> How to Use</h2>
+            <p>Required CSV headers:</p>
+            <ul>
+                <li><span class="code">record_type</span> ('victim', 'bank_transaction', or 'atm_transaction')</li>
+                <li><span class="code">S_No</span> (Serial number)</li> 
+                <li><span class="code">account_number</span> (Account number)</li>
+                <li><span class="code">transaction_id</span> (Transaction identifier)</li>
+                <li><span class="code">to_bank_name</span> (Recipient bank name)</li>
+                <li><span class="code">to_account_number</span> (Recipient account number)</li>
+                <li><span class="code">IFSC_Code</span> (IFSC code of recipient bank)</li>
+                <li><span class="code">utr_id</span> (Unique Transaction Reference ID)</li>
+                <li><span class="code">transaction_date</span> (Date and time of transaction in DD-MM-YYYY HH:MM format)</li>
+                <li><span class="code">Withdrawal_Date_Time</span> (Date and time of ATM withdrawal in DD-MM-YYYY HH:MM format)</li>
+                <li><span class="code">transaction_amount</span> (Amount in transaction)</li>
+                <li><span class="code">disputed_amount</span> (Disputed transaction amount)</li>
+                <li><span class="code">transaction_status</span> (Status of transaction)</li>
+                <li><span class="code">from_bank_name</span> (Sender bank name)</li>
+                <li><span class="code">reference_no</span> (Reference number)</li>
+                <li><span class="code">atm_details</span> (ATM ID and place details for ATM transactions)</li>
+                <li><span class="code">action_taken_by</span> (Action taken by which party)</li>
+                <li><span class="code">date_of_action</span> (Date of action taken in DD-MM-YYYY format)</li>
+                <li><span class="code">complaint_date</span> (Date of complaint filed in DD-MM-YYYY format)</li>
+                <li><span class="code">name</span> (Account holder name)</li>
+                <li><span class="code">phone</span> (Account holder phone number)</li>
+                <li><span class="code">email</span> (Account holder email address)</li>
+                <li><span class="code">city</span> (Account holder city)</li>
+                <li><span class="code">state</span> (Account holder state)</li>
+                <li><span class="code">card_details</span> (Card details used in transaction)</li>
+                <li><span class="code">bank_wallet_merchant</span> (Bank, wallet or merchant)</li>
+                <li><span class="code">transaction_type</span> (Type of transaction - credit, debit, withdrawn, etc.)</li>
+                <li><span class="code">note</span> (Additional notes about the transaction)</li>
+            </ul>
+        </div>
+        <div class="card usage-guide">
+            <h2><i class="fas fa-book"></i> Usage Guide</h2>
+            
+            <p>Follow these steps to use the Omnitrix Transaction Analyzer:</p>
+            
+            <h3>1. Prepare Your CSV File</h3>
+            <p>Ensure your CSV file includes the following required headers:</p>
+            <ul>
+                <li><span class="code">record_type</span> ('victim', 'bank_transaction', or 'atm_transaction')</li>
+                <li><span class="code">S_No</span> (Serial number)</li> 
+                <li><span class="code">account_number</span> (Account number)</li>
+                <li><span class="code">transaction_id</span> (Transaction identifier)</li>
+                <li><span class="code">to_bank_name</span> (Recipient bank name)</li>
+                <li><span class="code">to_account_number</span> (Recipient account number)</li>
+                <li><span class="code">IFSC_Code</span> (IFSC code of recipient bank)</li>
+                <li><span class="code">utr_id</span> (Unique Transaction Reference ID)</li>
+                <li><span class="code">transaction_date</span> (Date and time of transaction in DD-MM-YYYY HH:MM format)</li>
+                <li><span class="code">Withdrawal_Date_Time</span> (Date and time of ATM withdrawal in DD-MM-YYYY HH:MM format)</li>
+                <li><span class="code">transaction_amount</span> (Amount in transaction)</li>
+                <li><span class="code">disputed_amount</span> (Disputed transaction amount)</li>
+                <li><span class="code">transaction_status</span> (Status of transaction)</li>
+                <li><span class="code">from_bank_name</span> (Sender bank name)</li>
+                <li><span class="code">reference_no</span> (Reference number)</li>
+                <li><span class="code">atm_details</span> (ATM ID and place details for ATM transactions)</li>
+                <li><span class="code">action_taken_by</span> (Action taken by which party)</li>
+                <li><span class="code">date_of_action</span> (Date of action taken in DD-MM-YYYY format)</li>
+                <li><span class="code">complaint_date</span> (Date of complaint filed in DD-MM-YYYY format)</li>
+                <li><span class="code">name</span> (Account holder name)</li>
+                <li><span class="code">phone</span> (Account holder phone number)</li>
+                <li><span class="code">email</span> (Account holder email address)</li>
+                <li><span class="code">city</span> (Account holder city)</li>
+                <li><span class="code">state</span> (Account holder state)</li>
+                <li><span class="code">card_details</span> (Card details used in transaction)</li>
+                <li><span class="code">bank_wallet_merchant</span> (Bank, wallet or merchant)</li>
+                <li><span class="code">transaction_type</span> (Type of transaction - credit, debit, withdrawn, etc.)</li>
+                <li><span class="code">note</span> (Additional notes about the transaction)</li>
+            </ul>
+            
+            <h3>2. Upload Your CSV File</h3>
+            <ol>
+                <li>Click on the upload area or drag and drop your CSV file.</li>
+            </ol>
+            <img src="step (1).png" alt="Upload area screenshot" />
+            
+            <h3>3. Process the CSV Data</h3>
+            <ol>
+                <li>Once your file is selected, click the "Process CSV" button.</li>
+                <li>The app will parse the CSV and convert it to JSON format.</li>
+                <li>A preview of the processed data will appear below the buttons.</li>
+            </ol>
+            <img src="step (3).png" alt="Processing data screenshot" />
+            
+            <h3>4. Download the JSON File</h3>
+            <ol>
+                <li>After processing, click "Download JSON" to save the data.</li>
+            </ol>
+            
+            <h3>5. View the Transaction Graph</h3>
+            <ol>
+                <li>To visualize the data, click "View Graph".</li>
+                <li>An interactive graph of the transactions will open.</li>
+            </ol>
+            <img src="step (2).png" alt="Transaction graph screenshot" />
+            
+            <h3>Additional Features</h3>
+            <ul>
+                <li>Load sample data with the "Load Sample Data" button.</li>
+                <li>Status messages confirm operations or alert of errors.</li>
+            </ul>
+            
+            <p>That's it! You're now ready to analyze your transaction data. If you need any assistance, please contact our support team.</p>
+        </div>
+        <div class="card features-pricing">
+            <h2>Wanna purchase</h2>
+            
+            <h3>Key Features</h3>
+            <ul>
+                <li><i class="fas fa-check"></i> Seamless CSV data processing</li>
+                <li><i class="fas fa-check"></i> Intuitive data visualization</li>
+                <li><i class="fas fa-check"></i> Comprehensive transaction analysis</li>
+                <li><i class="fas fa-check"></i> Secure data handling and privacy</li>
+                <li><i class="fas fa-check"></i> Easy integration with existing systems</li>
+                <li><i class="fas fa-check"></i> Regular maintenance and updates</li>
+            </ul>
+
+            <h3>Pricing</h3>
+            <p>The Omnitrix Transaction Analyzer is available for a one-time fee of <strong>Rs 50,00,000 + 18% GST</strong>. This includes:</p>
+            <ul>
+                <li><i class="fas fa-check"></i> Full access to all features and functionalities</li>
+                <li><i class="fas fa-check"></i> One year of maintenance and support</li>
+                <li><i class="fas fa-check"></i> Seamless integration assistance</li>
+                <li><i class="fas fa-check"></i> Prioritized data safety and privacy measures</li>
+            </ul>
+
+            <p>To purchase or request more information, please email us at <a href="mailto:connect@akshaykotish.com" style="color: yellow; font-weight: bold;;">connect@akshaykotish.com</a>.</p>
+        </div>
+    </div>
 
     <script>
-        // Get the URL from the page parameters
-        const params = new URLSearchParams(window.location.search);
-        const baseUrl = params.get('url') || '';
+        // Core functionality
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const processBtn = document.getElementById('processBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const graphBtn = document.getElementById('graphBtn');
+        const status = document.getElementById('status');
+        const preview = document.getElementById('preview');
+        let selectedFile = null;
+        let processedData = null;
 
-        // Set the iframe source
-        document.getElementById('caseFrame').src = baseUrl + '/case1.html';
+        // Sample CSV file
+        const sampleCSV = `record_type,S_No,account_number,transaction_id,to_bank_name,to_account_number,IFSC_Code,utr_id,transaction_date,Withdrawal_Date_Time,transaction_amount,disputed_amount,transaction_status,from_bank_name,reference_no,atm_details,action_taken_by,date_of_action,complaint_date,name,phone,email,city,state,card_details,bank_wallet_merchant,transaction_type,note
+victim,1,4532167890,TXN001,,,,,01-01-2024 10:00,,50000,50000,Under Investigation,SBI Bank,REF001,,,02-01-2024,03-01-2024,John Doe,9988776655,john@example.com,Mumbai,Maharashtra,VISA-****1234,SBI Bank,delete,Initial Victim's Account
+bank_transaction,2,4532167890,TXN002,HDFC Bank,7865432109,HDFC0001234,UTR123456,01-01-2024 10:00,,50000,50000,Success,SBI Bank,REF002,,System,02-01-2024,,,,,,,,credit,First fraudulent transfer from victim
+bank_transaction,3,7865432109,TXN003,ICICI Bank,9876543210,ICIC0001234,UTR123457,01-01-2024 10:15,,25000,25000,Success,HDFC Bank,REF003,,System,02-01-2024,,,,,,,,credit,Money split transfer 1
+bank_transaction,4,7865432109,TXN004,Axis Bank,6543217890,UTIB0001234,UTR123458,01-01-2024 10:20,,25000,25000,Success,HDFC Bank,REF004,,System,02-01-2024,,,,,,,,credit,Money split transfer 2
+atm_transaction,5,9876543210,TXN005,ICICI Bank,,ICIC0001234,UTR123459,01-01-2024 11:30,01-01-2024 11:35,20000,20000,Success,ICICI Bank,REF005,ATM ID :- ATM123<br>Place of ATM :- Mumbai Central,John Smith,02-01-2024,,,,,,,,withdrawn,Suspect withdrew from first split
+bank_transaction,6,9876543210,TXN006,Yes Bank,5432167890,YESB0001234,UTR123460,01-01-2024 12:00,,5000,5000,Success,ICICI Bank,REF006,,System,02-01-2024,,,,,,,,credit,Remaining amount layered
+atm_transaction,7,6543217890,TXN007,Axis Bank,,UTIB0001234,UTR123461,01-01-2024 12:15,01-01-2024 12:20,20000,20000,Success,Axis Bank,REF007,ATM ID :- ATM456<br>Place of ATM :- Delhi Central,Jane Smith,02-01-2024,,,,,,,,withdrawn,Suspect withdrew from second split
+bank_transaction,8,6543217890,TXN008,PhonePe,3321567890,PHPE0001234,UTR123462,01-01-2024 13:15,,5000,5000,Success,Axis Bank,REF008,,System,02-01-2024,,,,,,,,credit,Remaining money to digital wallet
+bank_transaction,9,5432167890,TXN009,Google Pay,2215678901,GPAY0001234,UTR123463,01-01-2024 14:30,,5000,5000,Success,Yes Bank,REF009,,System,02-01-2024,,,,,,,,credit,Further layering through wallet
+bank_transaction,10,3321567890,TXN010,HDFC Bank,1123456789,HDFC0004321,UTR123464,01-01-2024 16:00,,5000,5000,Hold,PhonePe,REF010,,Police,02-01-2024,,,,,,,,hold,Police froze the account
+bank_transaction,11,2215678901,TXN011,SBI Bank,8877665544,SBIN0001234,UTR123465,01-01-2024 16:15,,5000,5000,Lean,Google Pay,REF011,,Legal Team,02-01-2024,,,,,,,,lean,Legal hold placed on last transfer`;
 
-        // Navigate to graph.html after 3 seconds
-        setTimeout(() => {
-            window.location.href = baseUrl + '/graph.html';
-        }, 3000);
+        // Download sample CSV button handler
+        document.getElementById('sampleDownloadBtn').addEventListener('click', () => {
+            const blob = new Blob([sampleCSV], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'sample.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        // Event Listeners for drag and drop
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            dropZone.classList.add('dragover');
+        }
+
+        function unhighlight() {
+            dropZone.classList.remove('dragover');
+        }
+
+        // Handle file selection events
+        dropZone.addEventListener('drop', handleDrop);
+        dropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFileSelect);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            handleFiles(dt.files);
+        }
+
+        function handleFileSelect(e) {
+            handleFiles(e.target.files);
+        }
+
+        function handleFiles(files) {
+            if (files.length > 0) {
+                selectedFile = files[0];
+                if (selectedFile.type !== 'text/csv') {
+                    showStatus('Please upload a CSV file', 'error');
+                    return;
+                }
+                showStatus(`Selected: ${selectedFile.name}`, 'success');
+                processBtn.disabled = false;
+                preview.style.display = 'none';
+                downloadBtn.disabled = true;
+                graphBtn.disabled = true;
+            }
+        }
+
+        function showStatus(message, type) {
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.style.display = 'block';
+            if (type === 'success') {
+                setTimeout(() => {
+                    status.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        function processCSV(csvText) {
+            // Split CSV into rows and handle quoted values properly
+            const rows = csvText.split(/\r?\n/).filter(row => row.trim());
+            
+            const parseCSVRow = (row) => {
+                const entries = [];
+                let inQuotes = false;
+                let currentEntry = '';
+                
+                for (let i = 0; i < row.length; i++) {
+                    const char = row[i];
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        entries.push(currentEntry.trim().replace(/^["']|["']$/g, ''));
+                        currentEntry = '';
+                    } else {
+                        currentEntry += char;
+                    }
+                }
+                entries.push(currentEntry.trim().replace(/^["']|["']$/g, ''));
+                return entries;
+            };
+
+            const headers = parseCSVRow(rows[0]).map(header => header.toLowerCase().trim());
+            const data = {
+                victim: [],
+                transaction_details: []
+            };
+
+            const columnIndices = {};
+            headers.forEach((header, index) => {
+                columnIndices[header] = index;
+            });
+
+            // Process each row
+            for (let i = 1; i < rows.length; i++) {
+                const row = parseCSVRow(rows[i]);
+                if (row.length < 3) continue;
+
+                const getValue = (columnName) => {
+                    const index = columnIndices[columnName];
+                    return index !== undefined && row[index] ? row[index].trim() : "";
+                };
+
+                const recordType = getValue('record_type');
+                
+                if (recordType === 'victim') {
+                    const victim = {
+                        "type": getValue('record_type'),
+                        "S_No": getValue('s_no'),
+                        "Account_No_Wallet_ID": getValue('account_number'),
+                        "name": getValue('name'),
+                        "phone": getValue('phone'),
+                        "email": getValue('email'),
+                        "city": getValue('city'),
+                        "state": getValue('state'),
+                        "Transaction_ID": getValue('transaction_id'),
+                        "Card_Details": getValue('card_details'),
+                        "Transaction_Amount": getValue('transaction_amount'),
+                        "Reference_No": getValue('reference_no'),
+                        "Transaction_Date_Time": formatDate(getValue('transaction_date')),
+                        "Complaint_Date": formatDate(getValue('complaint_date')),
+                        "Bank_Wallet_Merchant_Insurance": getValue('bank_wallet_merchant'),
+                        "bank_account": {
+                            "name": getValue('bank_wallet_merchant'),
+                            "account_number": getValue('account_number')
+                        }
+                    };
+                    data.victim.push(victim);
+                } else if (recordType === 'bank_transaction' || recordType === 'atm_transaction') {
+                    const transaction = {
+                        "type": getValue('record_type'),
+                        "S_No": getValue('s_no'),
+                        "from_account_number": getValue('account_number'),
+                        "transaction_id": getValue('transaction_id'),
+                        "to_bank_name": getValue('to_bank_name'),
+                        "to_account_number": getValue('to_account_number'),
+                        "IFSC_Code": getValue('ifsc_code'),
+                        "utr_id": getValue('utr_id'),
+                        "Transaction_Date_Time": formatDate(getValue('transaction_date')),
+                        "transaction_amount": getValue('transaction_amount'),
+                        "Disputed_Amount": getValue('disputed_amount'),
+                        "transaction_status": getValue('transaction_status'),
+                        "from_bank_name": getValue('from_bank_name'),
+                        "to_bank_details": {
+                            "name": getValue('to_bank_name'),
+                            "account_number": getValue('to_account_number'),
+                            "ifsc": getValue('ifsc_code')
+                        },
+                        "Date_of_Action": formatDate(getValue('date_of_action'))
+                    };
+
+                    if (recordType === 'atm_transaction') {
+                        transaction.ATM_Details = getValue('atm_details');
+                        transaction.Action_Taken_By = getValue('action_taken_by');
+                        transaction.Withdrawal_Date_Time = getValue('withdrawal_date_time');
+                        
+                        const atmDetails = getValue('atm_details');
+                        if (atmDetails) {
+                            const atmIdMatch = atmDetails.match(/ATM ID :-\s*(.*?)(?:<br>|$)/);
+                            const placeMatch = atmDetails.match(/Place of ATM :-\s*(.*?)(?:<br>|$)/);
+                            transaction.to_bank_details.ATM_ID = atmIdMatch ? atmIdMatch[1].trim() : "";
+                            transaction.to_bank_details.place = placeMatch ? placeMatch[1].trim() : "";
+                        }
+                    }
+
+                    data.transaction_details.push(transaction);
+                }
+            }
+
+            return data;
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return "";
+            try {
+                const [datePart, timePart] = dateStr.split(' ');
+                const [day, month, year] = datePart.split('-').map(num => parseInt(num));
+                const time = timePart || '00:00';
+                const dateObj = new Date(year, month - 1, day);
+                if (!isNaN(dateObj.getTime())) {
+                    return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')} ${time}`;
+                }
+                return dateStr;
+            } catch {
+                return dateStr;
+            }
+        }
+
+        // Process CSV button click handler
+        processBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+            localStorage.clear();
+            setLoading(true);
+
+            try {
+                const text = await selectedFile.text();
+                processedData = processCSV(text);
+                
+                localStorage.setItem('Case1', JSON.stringify(processedData));
+                preview.style.display = 'block';
+                preview.textContent = JSON.stringify(processedData, null, 2);
+                
+                showStatus(`Processed ${processedData.transaction_details.length} transactions successfully`, 'success');
+                downloadBtn.disabled = false;
+                graphBtn.disabled = false;
+            } catch (error) {
+                console.error('Processing error:', error);
+                showStatus('Error processing CSV: ' + error.message, 'error');
+                preview.style.display = 'none';
+                downloadBtn.disabled = true;
+                graphBtn.disabled = true;
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // Sample data button handler
+        document.getElementById('sampleBtn').addEventListener('click', () => {
+            const sampleData = { "victim": [ { "type": "victim", "S_No": "1", "Account_No_Wallet_ID": "4532167890", "name": "John Doe", "phone": "9988776655", "email": "john@example.com", "city": "Mumbai", "state": "Maharashtra", "Transaction_ID": "TXN001", "Card_Details": "VISA-****1234", "Transaction_Amount": "50000", "Reference_No": "REF001", "Transaction_Date_Time": "2024-01-01 10:00", "Complaint_Date": "2024-01-03 00:00", "Bank_Wallet_Merchant_Insurance": "SBI Bank", "bank_account": { "name": "SBI Bank", "account_number": "4532167890" } } ], "transaction_details": [ { "type": "bank_transaction", "S_No": "2", "from_account_number": "4532167890", "transaction_id": "TXN002", "to_bank_name": "HDFC Bank", "to_account_number": "7865432109", "IFSC_Code": "HDFC0001234", "utr_id": "UTR123456", "Transaction_Date_Time": "2024-01-01 10:00", "transaction_amount": "50000", "Disputed_Amount": "50000", "transaction_status": "Success", "from_bank_name": "SBI Bank", "to_bank_details": { "name": "HDFC Bank", "account_number": "7865432109", "ifsc": "HDFC0001234" }, "Date_of_Action": "2024-01-02 00:00" }, { "type": "bank_transaction", "S_No": "3", "from_account_number": "7865432109", "transaction_id": "TXN003", "to_bank_name": "ICICI Bank", "to_account_number": "9876543210", "IFSC_Code": "ICIC0001234", "utr_id": "UTR123457", "Transaction_Date_Time": "2024-01-01 10:15", "transaction_amount": "25000", "Disputed_Amount": "25000", "transaction_status": "Success", "from_bank_name": "HDFC Bank", "to_bank_details": { "name": "ICICI Bank", "account_number": "9876543210", "ifsc": "ICIC0001234" }, "Date_of_Action": "2024-01-02 00:00" }, { "type": "bank_transaction", "S_No": "4", "from_account_number": "7865432109", "transaction_id": "TXN004", "to_bank_name": "Axis Bank", "to_account_number": "6543217890", "IFSC_Code": "UTIB0001234", "utr_id": "UTR123458", "Transaction_Date_Time": "2024-01-01 10:20", "transaction_amount": "25000", "Disputed_Amount": "25000", "transaction_status": "Success", "from_bank_name": "HDFC Bank", "to_bank_details": { "name": "Axis Bank", "account_number": "6543217890", "ifsc": "UTIB0001234" }, "Date_of_Action": "2024-01-02 00:00" }, { "type": "atm_transaction", "S_No": "5", "from_account_number": "9876543210", "transaction_id": "TXN005", "to_bank_name": "ICICI Bank", "to_account_number": "", "IFSC_Code": "ICIC0001234", "utr_id": "UTR123459", "Transaction_Date_Time": "2024-01-01 11:30", "transaction_amount": "20000", "Disputed_Amount": "20000", "transaction_status": "Success", "from_bank_name": "ICICI Bank", "to_bank_details": { "name": "ICICI Bank", "account_number": "", "ifsc": "ICIC0001234", "ATM_ID": "ATM123", "place": "Mumbai Central" }, "Date_of_Action": "2024-01-02 00:00", "ATM_Details": "ATM ID :- ATM123<br>Place of ATM :- Mumbai Central", "Action_Taken_By": "John Smith", "Withdrawal_Date_Time": "01-01-2024 11:35" }, { "type": "bank_transaction", "S_No": "6", "from_account_number": "9876543210", "transaction_id": "TXN006", "to_bank_name": "Yes Bank", "to_account_number": "5432167890", "IFSC_Code": "YESB0001234", "utr_id": "UTR123460", "Transaction_Date_Time": "2024-01-01 12:00", "transaction_amount": "5000", "Disputed_Amount": "5000", "transaction_status": "Success", "from_bank_name": "ICICI Bank", "to_bank_details": { "name": "Yes Bank", "account_number": "5432167890", "ifsc": "YESB0001234" }, "Date_of_Action": "2024-01-02 00:00" }, { "type": "atm_transaction", "S_No": "7", "from_account_number": "6543217890", "transaction_id": "TXN007", "to_bank_name": "Axis Bank", "to_account_number": "", "IFSC_Code": "UTIB0001234", "utr_id": "UTR123461", "Transaction_Date_Time": "2024-01-01 12:15", "transaction_amount": "20000", "Disputed_Amount": "20000", "transaction_status": "Success", "from_bank_name": "Axis Bank", "to_bank_details": { "name": "Axis Bank", "account_number": "", "ifsc": "UTIB0001234", "ATM_ID": "ATM456", "place": "Delhi Central" }, "Date_of_Action": "2024-01-02 00:00", "ATM_Details": "ATM ID :- ATM456<br>Place of ATM :- Delhi Central", "Action_Taken_By": "Jane Smith", "Withdrawal_Date_Time": "01-01-2024 12:20" }, { "type": "bank_transaction", "S_No": "8", "from_account_number": "6543217890", "transaction_id": "TXN008", "to_bank_name": "PhonePe", "to_account_number": "3321567890", "IFSC_Code": "PHPE0001234", "utr_id": "UTR123462", "Transaction_Date_Time": "2024-01-01 13:15", "transaction_amount": "5000", "Disputed_Amount": "5000", "transaction_status": "Success", "from_bank_name": "Axis Bank", "to_bank_details": { "name": "PhonePe", "account_number": "3321567890", "ifsc": "PHPE0001234" }, "Date_of_Action": "2024-01-02 00:00" }, { "type": "bank_transaction", "S_No": "9", "from_account_number": "5432167890", "transaction_id": "TXN009", "to_bank_name": "Google Pay", "to_account_number": "2215678901", "IFSC_Code": "GPAY0001234", "utr_id": "UTR123463", "Transaction_Date_Time": "2024-01-01 14:30", "transaction_amount": "5000", "Disputed_Amount": "5000", "transaction_status": "Success", "from_bank_name": "Yes Bank", "to_bank_details": { "name": "Google Pay", "account_number": "2215678901", "ifsc": "GPAY0001234" }, "Date_of_Action": "2024-01-02 00:00" }, { "type": "bank_transaction", "S_No": "10", "from_account_number": "3321567890", "transaction_id": "TXN010", "to_bank_name": "HDFC Bank", "to_account_number": "1123456789", "IFSC_Code": "HDFC0004321", "utr_id": "UTR123464", "Transaction_Date_Time": "2024-01-01 16:00", "transaction_amount": "5000", "Disputed_Amount": "5000", "transaction_status": "Hold", "from_bank_name": "PhonePe", "to_bank_details": { "name": "HDFC Bank", "account_number": "1123456789", "ifsc": "HDFC0004321" }, "Date_of_Action": "2024-01-02 00:00" }, { "type": "bank_transaction", "S_No": "11", "from_account_number": "2215678901", "transaction_id": "TXN011", "to_bank_name": "SBI Bank", "to_account_number": "8877665544", "IFSC_Code": "SBIN0001234", "utr_id": "UTR123465", "Transaction_Date_Time": "2024-01-01 16:15", "transaction_amount": "5000", "Disputed_Amount": "5000", "transaction_status": "Lean", "from_bank_name": "Google Pay", "to_bank_details": { "name": "SBI Bank", "account_number": "8877665544", "ifsc": "SBIN0001234" }, "Date_of_Action": "2024-01-02 00:00" } ] }
+
+            ;
+            
+            localStorage.setItem('Case1', JSON.stringify(sampleData));
+            preview.style.display = 'block';
+            preview.textContent = JSON.stringify(sampleData, null, 2);
+            downloadBtn.disabled = false;
+            graphBtn.disabled = false;
+            showStatus('Sample data loaded successfully!', 'success');
+        });
+
+        // Download button handler
+        downloadBtn.addEventListener('click', () => {
+            if (!processedData) return;
+
+            try {
+                const jsonString = JSON.stringify(processedData, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'batman_analysis.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showStatus('JSON file downloaded successfully!', 'success');
+            } catch (error) {
+                showStatus('Error downloading file: ' + error.message, 'error');
+            }
+        });
+
+        // Graph button handler
+        graphBtn.addEventListener('click', () => {
+            try {
+                window.open('graph.html', '_blank');
+            } catch (error) {
+                showStatus('Error navigating to graph view: ' + error.message, 'error');
+            }
+        });
+
+        function setLoading(isLoading) {
+            processBtn.disabled = isLoading;
+            if (isLoading) {
+                processBtn.classList.add('loading');
+                processBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            } else {
+                processBtn.classList.remove('loading');
+                processBtn.innerHTML = '<i class="fas fa-cogs"></i> Process CSV';
+            }
+        }
+
+        // Initial setup
+        window.addEventListener('load', () => {
+            console.log('Batman CSV Analyzer loaded and ready');
+            const existingData = localStorage.getItem('Case1');
+            if (existingData) {
+                try {
+                    processedData = JSON.parse(existingData);
+                    preview.style.display = 'block';
+                    preview.textContent = JSON.stringify(processedData, null, 2);
+                    downloadBtn.disabled = false;
+                    graphBtn.disabled = false;
+                } catch (error) {
+                    console.error('Error loading existing data:', error);
+                }
+            }
+        });
     </script>
 </body>
 </html>

@@ -636,18 +636,11 @@
         let processedData = null;
 
         // Sample CSV file
-        const sampleCSV = `record_type,S_No,account_number,transaction_id,to_bank_name,to_account_number,IFSC_Code,utr_id,transaction_date,Withdrawal_Date_Time,transaction_amount,disputed_amount,transaction_status,from_bank_name,reference_no,atm_details,action_taken_by,date_of_action,complaint_date,name,phone,email,city,state,card_details,bank_wallet_merchant,transaction_type,note
-victim,1,4532167890,TXN001,,,,,01-01-2024 10:00,,50000,50000,Under Investigation,SBI Bank,REF001,,,02-01-2024,03-01-2024,John Doe,9988776655,john@example.com,Mumbai,Maharashtra,VISA-****1234,SBI Bank,delete,Initial Victim's Account
-bank_transaction,2,4532167890,TXN002,HDFC Bank,7865432109,HDFC0001234,UTR123456,01-01-2024 10:00,,50000,50000,Success,SBI Bank,REF002,,System,02-01-2024,,,,,,,,credit,First fraudulent transfer from victim
-bank_transaction,3,7865432109,TXN003,ICICI Bank,9876543210,ICIC0001234,UTR123457,01-01-2024 10:15,,25000,25000,Success,HDFC Bank,REF003,,System,02-01-2024,,,,,,,,credit,Money split transfer 1
-bank_transaction,4,7865432109,TXN004,Axis Bank,6543217890,UTIB0001234,UTR123458,01-01-2024 10:20,,25000,25000,Success,HDFC Bank,REF004,,System,02-01-2024,,,,,,,,credit,Money split transfer 2
-atm_transaction,5,9876543210,TXN005,ICICI Bank,,ICIC0001234,UTR123459,01-01-2024 11:30,01-01-2024 11:35,20000,20000,Success,ICICI Bank,REF005,ATM ID :- ATM123<br>Place of ATM :- Mumbai Central,John Smith,02-01-2024,,,,,,,,withdrawn,Suspect withdrew from first split
-bank_transaction,6,9876543210,TXN006,Yes Bank,5432167890,YESB0001234,UTR123460,01-01-2024 12:00,,5000,5000,Success,ICICI Bank,REF006,,System,02-01-2024,,,,,,,,credit,Remaining amount layered
-atm_transaction,7,6543217890,TXN007,Axis Bank,,UTIB0001234,UTR123461,01-01-2024 12:15,01-01-2024 12:20,20000,20000,Success,Axis Bank,REF007,ATM ID :- ATM456<br>Place of ATM :- Delhi Central,Jane Smith,02-01-2024,,,,,,,,withdrawn,Suspect withdrew from second split
-bank_transaction,8,6543217890,TXN008,PhonePe,3321567890,PHPE0001234,UTR123462,01-01-2024 13:15,,5000,5000,Success,Axis Bank,REF008,,System,02-01-2024,,,,,,,,credit,Remaining money to digital wallet
-bank_transaction,9,5432167890,TXN009,Google Pay,2215678901,GPAY0001234,UTR123463,01-01-2024 14:30,,5000,5000,Success,Yes Bank,REF009,,System,02-01-2024,,,,,,,,credit,Further layering through wallet
-bank_transaction,10,3321567890,TXN010,HDFC Bank,1123456789,HDFC0004321,UTR123464,01-01-2024 16:00,,5000,5000,Hold,PhonePe,REF010,,Police,02-01-2024,,,,,,,,hold,Police froze the account
-bank_transaction,11,2215678901,TXN011,SBI Bank,8877665544,SBIN0001234,UTR123465,01-01-2024 16:15,,5000,5000,Lean,Google Pay,REF011,,Legal Team,02-01-2024,,,,,,,,lean,Legal hold placed on last transfer`;
+        const sampleCSV = `record_type,S_No,account_number,name,transaction_id,transaction_amount,transaction_date
+victim,1,1234567890,Bruce Wayne,TX123456,50000,01-01-2024
+bank_transaction,2,1234567890,Bruce Wayne,TX123456,50000,01-01-2024
+bank_transaction,3,1234567890,Bruce Wayne,TX123457,25000,02-01-2024
+atm_transaction,4,1234567890,Bruce Wayne,TX123458,10000,03-01-2024`;
 
         // Download sample CSV button handler
         document.getElementById('sampleDownloadBtn').addEventListener('click', () => {
@@ -888,9 +881,34 @@ bank_transaction,11,2215678901,TXN011,SBI Bank,8877665544,SBIN0001234,UTR123465,
 
         // Sample data button handler
         document.getElementById('sampleBtn').addEventListener('click', () => {
-            const sampleData = { "victim": [ { "type": "victim", "S_No": "1", "Account_No_Wallet_ID": "4532167890", "name": "John Doe", "phone": "9988776655", "email": "john@example.com", "city": "Mumbai", "state": "Maharashtra", "Transaction_ID": "TXN001", "Card_Details": "VISA-****1234", "Transaction_Amount": "50000", "Reference_No": "REF001", "Transaction_Date_Time": "2024-01-01 10:00", "Complaint_Date": "2024-01-03 00:00", "Bank_Wallet_Merchant_Insurance": "SBI Bank", "bank_account": { "name": "SBI Bank", "account_number": "4532167890" } } ], "transaction_details": [ { "type": "bank_transaction", "S_No": "2", "from_account_number": "4532167890", "transaction_id": "TXN002", "to_bank_name": "HDFC Bank", "to_account_number": "7865432109", "IFSC_Code": "HDFC0001234", "utr_id": "UTR123456", "Transaction_Date_Time": "2024-01-01 10:00", "transaction_amount": "50000", "Disputed_Amount": "50000", "transaction_status": "Success", "from_bank_name": "SBI Bank", "to_bank_details": { "name": "HDFC Bank", "account_number": "7865432109", "ifsc": "HDFC0001234" }, "Date_of_Action": "2024-01-02 00:00" }, { "type": "bank_transaction", "S_No": "3", "from_account_number": "7865432109", "transaction_id": "TXN003", "to_bank_name": "ICICI Bank", "to_account_number": "9876543210", "IFSC_Code": "ICIC0001234", "utr_id": "UTR123457", "Transaction_Date_Time": "2024-01-01 10:15", "transaction_amount": "25000", "Disputed_Amount": "25000", "transaction_status": "Success", "from_bank_name": "HDFC Bank", "to_bank_details": { "name": "ICICI Bank", "account_number": "9876543210", "ifsc": "ICIC0001234" }, "Date_of_Action": "2024-01-02 00:00" }, { "type": "bank_transaction", "S_No": "4", "from_account_number": "7865432109", "transaction_id": "TXN004", "to_bank_name": "Axis Bank", "to_account_number": "6543217890", "IFSC_Code": "UTIB0001234", "utr_id": "UTR123458", "Transaction_Date_Time": "2024-01-01 10:20", "transaction_amount": "25000", "Disputed_Amount": "25000", "transaction_status": "Success", "from_bank_name": "HDFC Bank", "to_bank_details": { "name": "Axis Bank", "account_number": "6543217890", "ifsc": "UTIB0001234" }, "Date_of_Action": "2024-01-02 00:00" }, { "type": "atm_transaction", "S_No": "5", "from_account_number": "9876543210", "transaction_id": "TXN005", "to_bank_name": "ICICI Bank", "to_account_number": "", "IFSC_Code": "ICIC0001234", "utr_id": "UTR123459", "Transaction_Date_Time": "2024-01-01 11:30", "transaction_amount": "20000", "Disputed_Amount": "20000", "transaction_status": "Success", "from_bank_name": "ICICI Bank", "to_bank_details": { "name": "ICICI Bank", "account_number": "", "ifsc": "ICIC0001234", "ATM_ID": "ATM123", "place": "Mumbai Central" }, "Date_of_Action": "2024-01-02 00:00", "ATM_Details": "ATM ID :- ATM123<br>Place of ATM :- Mumbai Central", "Action_Taken_By": "John Smith", "Withdrawal_Date_Time": "01-01-2024 11:35" }, { "type": "bank_transaction", "S_No": "6", "from_account_number": "9876543210", "transaction_id": "TXN006", "to_bank_name": "Yes Bank", "to_account_number": "5432167890", "IFSC_Code": "YESB0001234", "utr_id": "UTR123460", "Transaction_Date_Time": "2024-01-01 12:00", "transaction_amount": "5000", "Disputed_Amount": "5000", "transaction_status": "Success", "from_bank_name": "ICICI Bank", "to_bank_details": { "name": "Yes Bank", "account_number": "5432167890", "ifsc": "YESB0001234" }, "Date_of_Action": "2024-01-02 00:00" }, { "type": "atm_transaction", "S_No": "7", "from_account_number": "6543217890", "transaction_id": "TXN007", "to_bank_name": "Axis Bank", "to_account_number": "", "IFSC_Code": "UTIB0001234", "utr_id": "UTR123461", "Transaction_Date_Time": "2024-01-01 12:15", "transaction_amount": "20000", "Disputed_Amount": "20000", "transaction_status": "Success", "from_bank_name": "Axis Bank", "to_bank_details": { "name": "Axis Bank", "account_number": "", "ifsc": "UTIB0001234", "ATM_ID": "ATM456", "place": "Delhi Central" }, "Date_of_Action": "2024-01-02 00:00", "ATM_Details": "ATM ID :- ATM456<br>Place of ATM :- Delhi Central", "Action_Taken_By": "Jane Smith", "Withdrawal_Date_Time": "01-01-2024 12:20" }, { "type": "bank_transaction", "S_No": "8", "from_account_number": "6543217890", "transaction_id": "TXN008", "to_bank_name": "PhonePe", "to_account_number": "3321567890", "IFSC_Code": "PHPE0001234", "utr_id": "UTR123462", "Transaction_Date_Time": "2024-01-01 13:15", "transaction_amount": "5000", "Disputed_Amount": "5000", "transaction_status": "Success", "from_bank_name": "Axis Bank", "to_bank_details": { "name": "PhonePe", "account_number": "3321567890", "ifsc": "PHPE0001234" }, "Date_of_Action": "2024-01-02 00:00" }, { "type": "bank_transaction", "S_No": "9", "from_account_number": "5432167890", "transaction_id": "TXN009", "to_bank_name": "Google Pay", "to_account_number": "2215678901", "IFSC_Code": "GPAY0001234", "utr_id": "UTR123463", "Transaction_Date_Time": "2024-01-01 14:30", "transaction_amount": "5000", "Disputed_Amount": "5000", "transaction_status": "Success", "from_bank_name": "Yes Bank", "to_bank_details": { "name": "Google Pay", "account_number": "2215678901", "ifsc": "GPAY0001234" }, "Date_of_Action": "2024-01-02 00:00" }, { "type": "bank_transaction", "S_No": "10", "from_account_number": "3321567890", "transaction_id": "TXN010", "to_bank_name": "HDFC Bank", "to_account_number": "1123456789", "IFSC_Code": "HDFC0004321", "utr_id": "UTR123464", "Transaction_Date_Time": "2024-01-01 16:00", "transaction_amount": "5000", "Disputed_Amount": "5000", "transaction_status": "Hold", "from_bank_name": "PhonePe", "to_bank_details": { "name": "HDFC Bank", "account_number": "1123456789", "ifsc": "HDFC0004321" }, "Date_of_Action": "2024-01-02 00:00" }, { "type": "bank_transaction", "S_No": "11", "from_account_number": "2215678901", "transaction_id": "TXN011", "to_bank_name": "SBI Bank", "to_account_number": "8877665544", "IFSC_Code": "SBIN0001234", "utr_id": "UTR123465", "Transaction_Date_Time": "2024-01-01 16:15", "transaction_amount": "5000", "Disputed_Amount": "5000", "transaction_status": "Lean", "from_bank_name": "Google Pay", "to_bank_details": { "name": "SBI Bank", "account_number": "8877665544", "ifsc": "SBIN0001234" }, "Date_of_Action": "2024-01-02 00:00" } ] }
-
-            ;
+            const sampleData = {
+                "victim": [{
+                    "S_No": "1",
+                    "Account_No_Wallet_ID": "1234567890",
+                    "name": "Bruce Wayne",
+                    "phone": "1234567890",
+                    "email": "bruce@wayne.com",
+                    "Transaction_Amount": "50000",
+                    "Transaction_Date_Time": "2024-01-01 10:00",
+                    "bank_account": {
+                        "name": "Gotham National Bank",
+                        "account_number": "1234567890"
+                    }
+                }],
+                "transaction_details": [{
+                    "S_No": "1",
+                    "from_account_number": "1234567890",
+                    "to_account_number": "0987654321",
+                    "transaction_amount": "50000",
+                    "Transaction_Date_Time": "2024-01-01 10:00",
+                    "transaction_status": "completed",
+                    "to_bank_details": {
+                        "name": "Metropolis Bank",
+                        "account_number": "0987654321",
+                        "ifsc": "METB0001"
+                    }
+                }]
+            };
             
             localStorage.setItem('Case1', JSON.stringify(sampleData));
             preview.style.display = 'block';

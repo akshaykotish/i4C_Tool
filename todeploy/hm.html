@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batcomputer CSV Analyzer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+        
+        :root {
+            --batman-black: #1a1a1a;
+            --batman-yellow: #ffd700;
+            --batman-gray: #4a4a4a;
+            --batman-accent: #c4a000;
+            --error-red: #ff4444;
+            --success-green: #00c851;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--batman-black);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: 
+                linear-gradient(45deg, rgba(26, 26, 26, 0.9) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(26, 26, 26, 0.9) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, rgba(26, 26, 26, 0.9) 75%),
+                linear-gradient(-45deg, transparent 75%, rgba(26, 26, 26, 0.9) 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: rgba(26, 26, 26, 0.95);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+            border: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        .batman-logo {
+            width: 120px;
+            height: 120px;
+            margin: 1rem auto;
+            display: block;
+            filter: drop-shadow(0 0 10px var(--batman-yellow));
+            animation: pulseLogo 2s infinite;
+        }
+
+        @keyframes pulseLogo {
+            0% { filter: drop-shadow(0 0 5px var(--batman-yellow)); }
+            50% { filter: drop-shadow(0 0 15px var(--batman-yellow)); }
+            100% { filter: drop-shadow(0 0 5px var(--batman-yellow)); }
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--batman-yellow);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+            font-size: 2.5em;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--batman-gray);
+            padding: 2rem;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            background-color: rgba(74, 74, 74, 0.1);
+        }
+
+        .upload-area:hover, .upload-area.dragover {
+            border-color: var(--batman-yellow);
+            background-color: rgba(255, 215, 0, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .upload-area p {
+            font-size: 1.2em;
+            color: var(--batman-yellow);
+        }
+
+        .instructions {
+            background-color: rgba(74, 74, 74, 0.3);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            border-left: 4px solid var(--batman-yellow);
+        }
+
+        .instructions h2 {
+            color: var(--batman-yellow);
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+
+        .instructions ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .instructions li {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .instructions li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--batman-yellow);
+        }
+
+        .instructions code {
+            background-color: rgba(255, 215, 0, 0.1);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            color: var(--batman-yellow);
+            font-family: monospace;
+        }
+
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            background-color: var(--batman-accent);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover:not(:disabled) {
+            background-color: var(--batman-yellow);
+            color: var(--batman-black);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .btn:disabled {
+            background-color: var(--batman-gray);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .btn i {
+            font-size: 1.2em;
+        }
+
+        #status {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 5px;
+            display: none;
+            text-align: center;
+        }
+
+        #status.success {
+            background-color: rgba(0, 200, 81, 0.2);
+            border: 1px solid var(--success-green);
+            color: var(--success-green);
+        }
+
+        #status.error {
+            background-color: rgba(255, 68, 68, 0.2);
+            border: 1px solid var(--error-red);
+            color: var(--error-red);
+        }
+
+        #preview {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: rgba(74, 74, 74, 0.2);
+            border-radius: 5px;
+            display: none;
+            white-space: pre-wrap;
+            font-family: monospace;
+            max-height: 400px;
+            overflow-y: auto;
+            color: var(--batman-yellow);
+            border: 1px solid var(--batman-gray);
+            font-size: 0.9em;
+        }
+
+        .top-left-container {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            background: rgba(26, 26, 26, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .top-left-container:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 215, 0, 0.3);
+        }
+
+        .brand-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--batman-yellow);
+            letter-spacing: 2px;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .brand-divider {
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 215, 0, 0.5);
+            margin: 4px 0;
+        }
+
+        .brand-tagline {
+            font-size: 12px;
+            color: #9CA3AF;
+            margin: 0;
+        }
+
+        /* Loading animation */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading {
+            position: relative;
+            opacity: 0.7;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin: -10px 0 0 -10px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(74, 74, 74, 0.1);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--batman-yellow);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--batman-accent);
+        }
+    </style>
+</head>
+<body>
+    <!-- Branding Container -->
+    <div class="top-left-container" onclick="window.open('https://www.akshaykotish.com', '_blank')">
+        <h1 class="brand-title">OMNITRIX</h1>
+        <div class="brand-divider"></div>
+        <p class="brand-tagline">An Akshay Kotish & Co. Product</p>
+    </div>
+
+    <div class="container">
+        <!-- Batman Logo -->
+        <svg class="batman-logo" viewBox="0 0 100 60">
+            <path d="M50 10 
+                     C60 10 70 20 80 25 
+                     C90 30 95 40 95 50 
+                     C95 70 80 85 50 85 
+                     C20 85 5 70 5 50 
+                     C5 40 10 30 20 25 
+                     C30 20 40 10 50 10" 
+                  fill="var(--batman-yellow)"/>
+        </svg>
+        
+        <h1>Batcomputer CSV Analyzer</h1>
+        
+        <!-- Instructions -->
+        <div class="instructions">
+            <h2><i class="fas fa-info-circle"></i> How to Use</h2>
+            <p>Follow these steps to analyze your data:</p>
+            <ul>
+                <li>Prepare your CSV file with these required headers:</li>
+                <li><code>record_type</code>: 'victim', 'bank_transaction', or 'atm_transaction'</li>
+                <li><code>S_No</code>: Serial number</li>
+                <li><code>account_number</code>: Account number</li>
+                <li><code>name</code>: Account holder name</li>
+                <li><code>transaction_id</code>: Transaction identifier</li>
+                <li><code>transaction_amount</code>: Amount in transaction</li>
+                <li><code>transaction_date</code>: Date of transaction (DD-MM-YYYY format)</li>
+            </ul>
+            <p>Click "Load Sample Data" to see an example of the expected format.</p>
+        </div>
+
+        <!-- Upload Area -->
+        <div class="upload-area" id="dropZone">
+            <p><i class="fas fa-file-upload"></i> Drop CSV file here or click to upload</p>
+            <input type="file" id="fileInput" accept=".csv" style="display: none">
+        </div>
+
+        <!-- Status and Preview -->
+        <div id="status"></div>
+        <div id="preview"></div>
+
+        <!-- Buttons -->
+        <div class="buttons-container">
+            <button class="btn" id="sampleBtn">
+                <i class="fas fa-vial"></i> Load Sample Data
+            </button>
+            <button class="btn" id="processBtn" disabled>
+                <i class="fas fa-cogs"></i> Process CSV
+            </button>
+            <button class="btn" id="downloadBtn" disabled>
+                <i class="fas fa-download"></i> Download JSON
+            </button>
+            <button class="btn" id="graphBtn" disabled>
+                <i class="fas fa-project-diagram"></i> View Graph
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Core functionality
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const processBtn = document.getElementById('processBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const graphBtn = document.getElementById('graphBtn');
+        const status = document.getElementById('status');
+        const preview = document.getElementById('preview');
+        let selectedFile = null;
+        let processedData = null;
+
+        // Event Listeners for drag and drop
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            dropZone.classList.add('dragover');
+        }
+
+        function unhighlight() {
+            dropZone.classList.remove('dragover');
+        }
+
+        // Handle file selection events
+        dropZone.addEventListener('drop', handleDrop);
+        dropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFileSelect);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            handleFiles(dt.files);
+        }
+
+        function handleFileSelect(e) {
+            handleFiles(e.target.files);
+        }
+
+        function handleFiles(files) {
+            if (files.length > 0) {
+                selectedFile = files[0];
+                if (selectedFile.type !== 'text/csv') {
+                    showStatus('Please upload a CSV file', 'error');
+                    return;
+                }
+                showStatus(`Selected: ${selectedFile.name}`, 'success');
+                processBtn.disabled = false;
+                preview.style.display = 'none';
+                downloadBtn.disabled = true;
+                graphBtn.disabled = true;
+            }
+        }
+
+        function showStatus(message, type) {
+            status.textContent = message;
+            status.className = type;
+            status.style.display = 'block';
+            // Auto-hide success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    status.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        function processCSV(csvText) {
+            // Split CSV into rows and handle quoted values properly
+            const rows = csvText.split(/\r?\n/).filter(row => row.trim());
+            
+            const parseCSVRow = (row) => {
+                const entries = [];
+                let inQuotes = false;
+                let currentEntry = '';
+                
+                for (let i = 0; i < row.length; i++) {
+                    const char = row[i];
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        entries.push(currentEntry.trim().replace(/^["']|["']$/g, ''));
+                        currentEntry = '';
+                    } else {
+                        currentEntry += char;
+                    }
+                }
+                entries.push(currentEntry.trim().replace(/^["']|["']$/g, ''));
+                return entries;
+            };
+
+            const headers = parseCSVRow(rows[0]).map(header => header.toLowerCase().trim());
+            console.log("Headers found:", headers);
+
+            const data = {
+                victim: [],
+                transaction_details: []
+            };
+
+            const columnIndices = {};
+            headers.forEach((header, index) => {
+                columnIndices[header] = index;
+            });
+
+            // Process each row
+            for (let i = 1; i < rows.length; i++) {
+                const row = parseCSVRow(rows[i]);
+                if (row.length < 3) continue;
+
+                const getValue = (columnName) => {
+                    const index = columnIndices[columnName];
+                    return index !== undefined && row[index] ? row[index].trim() : "";
+                };
+
+                const recordType = getValue('record_type');
+                
+                if (recordType === 'victim') {
+                    const victim = {
+                        "S_No": getValue('s_no'),
+                        "Account_No_Wallet_ID": getValue('account_number'),
+                        "name": getValue('name'),
+                        "phone": getValue('phone'),
+                        "email": getValue('email'),
+                        "city": getValue('city'),
+                        "state": getValue('state'),
+                        "Transaction_ID": getValue('transaction_id'),
+                        "Card_Details": getValue('card_details'),
+                        "Transaction_Amount": getValue('transaction_amount'),
+                        "Reference_No": getValue('reference_no'),
+                        "Transaction_Date_Time": formatDate(getValue('transaction_date')),
+                        "Complaint_Date": formatDate(getValue('complaint_date')),
+                        "Bank_Wallet_Merchant_Insurance": getValue('bank_wallet_merchant'),
+                        "bank_account": {
+                            "name": getValue('bank_wallet_merchant'),
+                            "account_number": getValue('account_number')
+                        }
+                    };
+                    data.victim.push(victim);
+                } else if (recordType === 'bank_transaction' || recordType === 'atm_transaction') {
+                    const transaction = {
+                        "S_No": getValue('s_no'),
+                        "from_account_number": getValue('account_number'),
+                        "transaction_id": getValue('transaction_id'),
+                        "to_bank_name": getValue('to_bank_name'),
+                        "to_account_number": getValue('to_account_number'),
+                        "IFSC_Code": getValue('ifsc_code'),
+                        "utr_id": getValue('utr_id'),
+                        "Transaction_Date_Time": formatDate(getValue('transaction_date')),
+                        "transaction_amount": getValue('transaction_amount'),
+                        "Disputed_Amount": getValue('disputed_amount'),
+                        "transaction_status": getValue('transaction_status'),
+                        "from0_bank_name": getValue('from_bank_name'),
+                        "to_bank_details": {
+                            "name": getValue('to_bank_name'),
+                            "account_number": getValue('to_account_number'),
+                            "ifsc": getValue('ifsc_code')
+                        },
+                        "Date_of_Action": formatDate(getValue('date_of_action'))
+                    };
+
+                    if (recordType === 'atm_transaction') {
+                        transaction.ATM_Details = getValue('atm_details');
+                        transaction.Action_Taken_By = getValue('action_taken_by');
+                        transaction.Withdrawal_Date_Time = getValue('withdrawal_date_time');
+                        
+                        // Parse ATM details if present
+                        const atmDetails = getValue('atm_details');
+                        if (atmDetails) {
+                            const atmIdMatch = atmDetails.match(/ATM ID :-\s*(.*?)(?:<br>|$)/);
+                            const placeMatch = atmDetails.match(/Place of ATM :-\s*(.*?)(?:<br>|$)/);
+                            transaction.to_bank_details.ATM_ID = atmIdMatch ? atmIdMatch[1].trim() : "";
+                            transaction.to_bank_details.place = placeMatch ? placeMatch[1].trim() : "";
+                        }
+                    }
+
+                    data.transaction_details.push(transaction);
+                }
+            }
+
+            return data;
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return "";
+            try {
+                const [datePart, timePart] = dateStr.split(' ');
+                const [day, month, year] = datePart.split('-').map(num => parseInt(num));
+                const time = timePart || '00:00';
+                const dateObj = new Date(year, month - 1, day);
+                if (!isNaN(dateObj.getTime())) {
+                    return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')} ${time}`;
+                }
+                return dateStr;
+            } catch {
+                return dateStr;
+            }
+        }
+
+        // Process CSV button click handler
+        processBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+            localStorage.clear(); // Clear storage before processing
+            setLoading(true);
+
+            try {
+                const text = await selectedFile.text();
+                processedData = processCSV(text);
+                
+                localStorage.setItem('Case1', JSON.stringify(processedData));
+                
+                preview.style.display = 'block';
+                preview.textContent = JSON.stringify(processedData, null, 2);
+                
+                showStatus(`Processed ${processedData.transaction_details.length} transactions successfully`, 'success');
+                downloadBtn.disabled = false;
+                graphBtn.disabled = false;
+            } catch (error) {
+                console.error('Processing error:', error);
+                showStatus('Error processing CSV: ' + error.message, 'error');
+                preview.style.display = 'none';
+                downloadBtn.disabled = true;
+                graphBtn.disabled = true;
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // Sample data button handler
+        document.getElementById('sampleBtn').addEventListener('click', () => {
+            const sampleData = {
+                "victim": [{
+                    "S_No": "1",
+                    "Account_No_Wallet_ID": "1234567890",
+                    "name": "Bruce Wayne",
+                    "phone": "1234567890",
+                    "email": "bruce@wayne.com",
+                    "Transaction_Amount": "50000",
+                    "Transaction_Date_Time": "2024-01-01 10:00",
+                    "bank_account": {
+                        "name": "Gotham National Bank",
+                        "account_number": "1234567890"
+                    }
+                }],
+                "transaction_details": [{
+                    "S_No": "1",
+                    "from_account_number": "1234567890",
+                    "to_account_number": "0987654321",
+                    "transaction_amount": "50000",
+                    "Transaction_Date_Time": "2024-01-01 10:00",
+                    "transaction_status": "completed",
+                    "to_bank_details": {
+                        "name": "Metropolis Bank",
+                        "account_number": "0987654321",
+                        "ifsc": "METB0001"
+                    }
+                }]
+            };
+            
+            localStorage.setItem('Case1', JSON.stringify(sampleData));
+            preview.style.display = 'block';
+            preview.textContent = JSON.stringify(sampleData, null, 2);
+            downloadBtn.disabled = false;
+            graphBtn.disabled = false;
+            showStatus('Sample data loaded successfully!', 'success');
+        });
+
+        // Download button handler
+        downloadBtn.addEventListener('click', () => {
+            if (!processedData) return;
+
+            try {
+                const jsonString = JSON.stringify(processedData, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'batman_analysis.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showStatus('JSON file downloaded successfully!', 'success');
+            } catch (error) {
+                showStatus('Error downloading file: ' + error.message, 'error');
+            }
+        });
+
+        // Graph button handler
+        graphBtn.addEventListener('click', () => {
+            try {
+                window.location.href = 'graph.html';
+            } catch (error) {
+                showStatus('Error navigating to graph view: ' + error.message, 'error');
+            }
+        });
+
+        function setLoading(isLoading) {
+            processBtn.disabled = isLoading;
+            if (isLoading) {
+                processBtn.classList.add('loading');
+                processBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            } else {
+                processBtn.classList.remove('loading');
+                processBtn.innerHTML = '<i class="fas fa-cogs"></i> Process CSV';
+            }
+        }
+
+        // Initial setup
+        window.addEventListener('load', () => {
+            console.log('Batman CSV Analyzer loaded and ready');
+            const existingData = localStorage.getItem('Case1');
+            if (existingData) {
+                try {
+                    processedData = JSON.parse(existingData);
+                    preview.style.display = 'block';
+                    preview.textContent = JSON.stringify(processedData, null, 2);
+                    downloadBtn.disabled = false;
+                    graphBtn.disabled = false;
+                } catch (error) {
+                    console.error('Error loading existing data:', error);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
